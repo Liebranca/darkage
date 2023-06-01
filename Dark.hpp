@@ -1,5 +1,5 @@
-#ifndef __5E_DA_H__
-#define __5E_DA_H__
+#ifndef __7E_DARK_H__
+#define __7E_DARK_H__
 
 // ---   *   ---   *   ---
 // deps
@@ -12,7 +12,7 @@
 // ---   *   ---   *   ---
 // info
 
-class DA {
+class DARK {
 
 public:
 
@@ -69,17 +69,17 @@ private:
 public:
 
   // cstruc
-  DA(void);
-  ~DA(void) {};
+  DARK(void);
+  ~DARK(void) {};
 
-  SINGLETON(DA);
+  SINGLETON(DARK);
 
 // ---   *   ---   *   ---
 // scene
 
   void spawn_window(
 
-    std::string name    = "darkage",
+    std::string name    = "dark",
 
     CHASM::Loop draw_f  = &defdraw,
     CHASM::Loop logic_f = &deflogic
@@ -106,4 +106,4 @@ public:
 
 // ---   *   ---   *   ---
 
-#endif // __5E_DA_H__
+#endif // __7E_DARK_H__

@@ -17,10 +17,10 @@ Avt::set_config(
   name=>'darkage',
   scan=>'-x legacy',
 
-  build=>'ar:darkage',
+  build=>'ar:dark',
 
   incl=>[qw(bitter chasm gaoler sin)],
-  libs=>[qw(sin)],
+  libs=>[qw(chasm sin)],
 
 );
 

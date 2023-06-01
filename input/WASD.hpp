@@ -1,11 +1,11 @@
-#ifndef __5E_WASD_H__
-#define __5E_WASD_H__
+#ifndef __7E_WASD_H__
+#define __7E_WASD_H__
 
 // ---   *   ---   *   ---
 // deps
 
   #include "chasm/input/Kbd.hpp"
-  #include "logic/Movement.hpp"
+  #include "logic/Move.hpp"
 
 // ---   *   ---   *   ---
 // ROM
@@ -77,4 +77,4 @@ namespace Keysets {
 
 // ---   *   ---   *   ---
 
-#endif // __5E_WASD_H__
+#endif // __7E_WASD_H__

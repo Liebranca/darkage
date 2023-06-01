@@ -16,12 +16,12 @@
   #include "sin/Sin.hpp"
 
   #include "DA_Default.hpp"
-  #include "DA.hpp"
+  #include "Dark.hpp"
 
 // ---   *   ---   *   ---
 // cstruc
 
-DA::DA(void) {
+DARK::DARK(void) {
   this->keyset   = DA_Default::keys;
   this->programs = DA_Default::programs;
 
@@ -45,7 +45,7 @@ inline Clock& get_clock(void) {
 // compiles params listed
 // under this->programs
 
-void DA::load_shaders(void) {
+void DARK::load_shaders(void) {
   auto& Sin=SIN::ice();
   Sin.nit_programs(this->programs);
 
@@ -54,7 +54,7 @@ void DA::load_shaders(void) {
 // ---   *   ---   *   ---
 // creates window accto this->screen
 
-void DA::spawn_window(
+void DARK::spawn_window(
 
   std::string name,
 
@@ -97,7 +97,7 @@ void DA::spawn_window(
 // ---   *   ---   *   ---
 // creates camera accto this->screen
 
-void DA::spawn_camera(
+void DARK::spawn_camera(
 
   const glm::vec3& pos,
   const glm::quat& rot,
@@ -134,7 +134,7 @@ void DA::spawn_camera(
 // ---   *   ---   *   ---
 // runs application
 
-void DA::loop(void) {
+void DARK::loop(void) {
 
   auto& Chasm=CHASM::ice();
 
@@ -149,7 +149,7 @@ void DA::loop(void) {
 // ---   *   ---   *   ---
 // default drawing routine
 
-int DA::defdraw(void* data) {
+int DARK::defdraw(void* data) {
 
   auto& Sin = SIN::ice();
   auto  bat = (Nodes*) data;
@@ -172,7 +172,7 @@ int DA::defdraw(void* data) {
 // ---   *   ---   *   ---
 // ^selfex
 
-int DA::deflogic(void* data) {
+int DARK::deflogic(void* data) {
   return 1;
 
 };
@@ -180,7 +180,7 @@ int DA::deflogic(void* data) {
 // ---   *   ---   *   ---
 // get user-controlled node
 
-Node& DA::player(void) {
+Node& DARK::player(void) {
   auto& Sin=SIN::ice();
   return Sin.cam;
 

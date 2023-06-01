@@ -1,7 +1,8 @@
 // ---   *   ---   *   ---
 // deps
 
-  #include "DA.hpp"
+  #include "Dark.hpp"
+  #include "logic/Move.hpp"
 
 // ---   *   ---   *   ---
 // spawn meshes
@@ -20,7 +21,7 @@ void load_resources(void) {
 
 void load_objects(void) {
 
-  auto& Dark = DA::ice();
+  auto& Dark = DARK::ice();
   auto& Sin  = SIN::ice();
 
   Dark.draw_data.push_back(
@@ -47,19 +48,8 @@ int logic(void* data) {
   bool dy = fabs(mo.x) > 0.0001f;
 
   if(dx || dy) {
-
-    auto  hax = cam.get_hax() * mo.y;
-
-    glm::quat y {1,-hax.x,hax.y,-hax.z};
-    glm::quat x {1,0,-mo.x,0};
-
-    glm::quat r=x*y;
-    glm::vec3 v={r.x,r.y,r.z};
-
-    v*=4;
-
-    cam.set_angvel(v);
-    cam.ang_fmotion();
+    glm::vec3 origin {0,0,0};
+    Move::look_around_point(cam,mo,origin);
 
   };
 
@@ -85,13 +75,13 @@ int logic(void* data) {
 
 int main(void) {
 
-  auto& Dark=DA::ice();
+  auto& Dark=DARK::ice();
 
   Dark.spawn_window(
 
     "sined",
 
-    &DA::defdraw,
+    &DARK::defdraw,
     &logic
 
   );

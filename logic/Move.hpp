@@ -1,5 +1,5 @@
-#ifndef __5E_MOVEMENT_H__
-#define __5E_MOVEMENT_H__
+#ifndef __7E_MOVE_H__
+#define __7E_MOVE_H__
 
 // ---   *   ---   *   ---
 // deps
@@ -14,7 +14,7 @@ class Move {
 
 public:
 
-  VERSION   "v0.00.1b";
+  VERSION   "v0.00.2b";
   AUTHOR    "IBN-3DILA";
 
 // ---   *   ---   *   ---
@@ -46,8 +46,31 @@ public:
   static void player_stop_z(void);
   static void player_stop_x(void);
 
+// ---   *   ---   *   ---
+// angular control
+
+  static void look_around(
+
+    Node&      dst,
+    glm::vec2& motion,
+
+    float      mul=4.0f
+
+  );
+
+  static void look_around_point(
+
+    Node&      dst,
+
+    glm::vec2& motion,
+    glm::vec3& point,
+
+    float      mul=4.0f
+
+  );
+
 };
 
 // ---   *   ---   *   ---
 
-#endif // __5E_MOVEMENT_H__
+#endif // __7E_MOVEMENT_H__
