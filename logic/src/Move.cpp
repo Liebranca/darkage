@@ -71,35 +71,41 @@ void Move::look_around_point(
 
 ) {
 
+  // starting position -> point
   glm::vec3 beg=dst.get_pos();
+  glm::vec3 vto_beg=
+    dst.get_fwd()
+  * -distance
+  ;
 
+  // snap to point and rotate
+  // around self
   dst.teleport(point);
   Move::look_around(dst,motion,mul);
 
-  glm::vec3 end=
-
-    point + (
-
+  // point -> new orientation
+  glm::vec3 vto_end=
     dst.get_fwd()
   * -distance
+  ;
 
-  );
+  glm::vec3 end=point+vto_end;
 
-  glm::vec3 vel=Move::smooth_to(
-    beg,end,0.16f
-
-  );
-
-  dst.teleport(beg);
-
+  // smooth transition done if
+  // self is not centered on point
   if(
 
-    glm::distance(dst.get_pos(),end)
-  > 0.001f
+    glm::distance(beg-vto_beg,point)
+  > Move::SMEPS
 
   ) {
 
-    dst.move(vel);
+    Move::smooth_to(dst,beg,end);
+
+  // ^self is centered on point,
+  // so simply snap to final position
+  } else {
+    dst.teleport(end);
 
   };
 
@@ -127,7 +133,9 @@ void Move::drag(
 // ---   *   ---   *   ---
 // eases into position
 
-glm::vec3 Move::smooth_to(
+void Move::smooth_to(
+
+  Node&      dst,
 
   glm::vec3& beg,
   glm::vec3& end,
@@ -139,7 +147,13 @@ glm::vec3 Move::smooth_to(
   glm::vec3 vto      = end-beg;
   float     distance = glm::length(vto);
 
-  return vto*step;
+  vto *=
+    step
+  * (distance > 0.001f)
+  ;
+
+  dst.teleport(beg);
+  dst.move(vto);
 
 };
 

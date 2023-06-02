@@ -30,7 +30,7 @@ private:
 
     glm::vec3 cam_target   = {0,0,0};
     glm::vec3 cam_to_vto   = {0,0,0};
-    float     cam_to_dist  = 0.0f;
+    float     cam_to_dist  = 10.0f;
 
   };
 

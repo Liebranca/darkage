@@ -43,11 +43,7 @@ void View::get_cam_to(void) {
 
   auto& target = View::cam_target();
 
-  m_cache().cam_to_vto  = cam.get_pos()-target;
-  m_cache().cam_to_dist = glm::length(
-    m_cache().cam_to_vto
-
-  );
+  m_cache().cam_to_vto = cam.get_pos()-target;
 
 };
 
@@ -84,8 +80,7 @@ void View::mouse_look_at(glm::vec3& point) {
     cam,mo,
 
     point,
-    10.0f
-//    View::cam_to_dist()
+    View::cam_to_dist()
 
   );
 

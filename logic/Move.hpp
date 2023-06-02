@@ -22,6 +22,10 @@ public:
 
 private:
 
+  // distance epsilon for
+  // movement smoothing
+  cxr32 SMEPS=0.16f;
+
 // ---   *   ---   *   ---
 // iface
 
@@ -65,11 +69,14 @@ public:
 
   );
 
-  static glm::vec3 smooth_to(
+  static void smooth_to(
+
+    Node&      dst,
+
     glm::vec3& beg,
     glm::vec3& end,
 
-    float      step=1.0f
+    float      step=SMEPS
 
   );
 
