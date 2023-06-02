@@ -18,6 +18,31 @@ public:
   AUTHOR    "IBN-3DILA";
 
 // ---   *   ---   *   ---
+// helpers
+
+  struct Async_Smooth {
+
+    // input
+    glm::vec3 m_beg;
+    glm::vec3 m_end;
+    uint32_t  m_frames = 0;
+
+    // handled
+    uint32_t  m_cnt    = 0;
+    float     m_step   = 0.0f;
+
+    // xition ended
+    bool valid(void) {
+      return m_frames != 0;
+
+    };
+
+    // exec next step
+    void run(Node& dst);
+
+  };
+
+// ---   *   ---   *   ---
 // guts
 
 private:
@@ -45,7 +70,7 @@ public:
 
   );
 
-  static void look_around_point(
+  static Async_Smooth look_around_point(
 
     Node&      dst,
 
@@ -76,7 +101,27 @@ public:
     glm::vec3& beg,
     glm::vec3& end,
 
-    float      step=SMEPS
+    float      step
+
+  );
+
+  static Async_Smooth async_smooth_to(
+
+    Node&      dst,
+
+    glm::vec3& beg,
+    glm::vec3& end,
+
+    uint32_t   frames=8
+
+  );
+
+  static void zoom(
+
+    Node&      dst,
+    glm::vec3& point,
+
+    float      x
 
   );
 

@@ -16,7 +16,7 @@ class View {
 
 public:
 
-  VERSION   "v0.00.1b";
+  VERSION   "v0.00.2b";
   AUTHOR    "IBN-3DILA";
 
 // ---   *   ---   *   ---
@@ -31,6 +31,8 @@ private:
     glm::vec3 cam_target   = {0,0,0};
     glm::vec3 cam_to_vto   = {0,0,0};
     float     cam_to_dist  = 10.0f;
+
+    Move::Async_Smooth xition;
 
   };
 
@@ -88,6 +90,9 @@ public:
   static void mouse_drag(void);
 
   // TODO: mouse_drag_object
+
+  // ^move camera X away/closer to target
+  static void mouse_zoom(float x);
 
   // common control scheme for
   // controling a 3D viewport

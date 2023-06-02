@@ -44,6 +44,10 @@ void View::get_cam_to(void) {
   auto& target = View::cam_target();
 
   m_cache().cam_to_vto = cam.get_pos()-target;
+  m_cache().cam_to_dist=glm::length(
+    m_cache().cam_to_vto
+
+  );
 
 };
 
@@ -75,14 +79,23 @@ void View::mouse_look_at(glm::vec3& point) {
 
   Chasm.win.enable_mouse_trap();
 
-  Move::look_around_point(
+  // no transition in Q
+  if(! m_cache().xition.valid()) {
 
-    cam,mo,
+    m_cache().xition=Move::look_around_point(
 
-    point,
-    View::cam_to_dist()
+      cam,mo,
 
-  );
+      point,
+      View::cam_to_dist()
+
+    );
+
+  // ^finish transition in Q
+  } else {
+    m_cache().xition.run(cam);
+
+  };
 
 };
 
@@ -107,6 +120,18 @@ void View::mouse_drag(void) {
 };
 
 // ---   *   ---   *   ---
+// ^move camera away/closer to target
+
+void View::mouse_zoom(float x) {
+
+  auto& Sin   = SIN::ice();
+  auto& cam   = Sin.cam;
+
+  Move::zoom(cam,View::cam_target(),x);
+
+};
+
+// ---   *   ---   *   ---
 // common control scheme for
 // controling a 3D viewport
 
@@ -124,6 +149,7 @@ void View::mouse_3D(
 
   auto  do_drag = rat.clicks(drag_b);
   auto  do_view = rat.clicks(view_b);
+  auto  do_zoom = rat.wheel() * 4;
 
   if(do_view) {
     View::mouse_look_at(View::cam_target());
@@ -134,6 +160,11 @@ void View::mouse_3D(
   } else {
     Chasm.win.disable_mouse_trap();
     Move::clear(cam);
+
+  };
+
+  if(do_zoom) {
+    View::mouse_zoom(do_zoom);
 
   };
 

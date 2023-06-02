@@ -59,7 +59,7 @@ void Move::look_around(
 // ---   *   ---   *   ---
 // ^rotate around other
 
-void Move::look_around_point(
+Move::Async_Smooth Move::look_around_point(
 
   Node&      dst,
 
@@ -70,6 +70,9 @@ void Move::look_around_point(
   float      mul
 
 ) {
+
+  // return is xition
+  Async_Smooth out;
 
   // starting position -> point
   glm::vec3 beg=dst.get_pos();
@@ -91,8 +94,7 @@ void Move::look_around_point(
 
   glm::vec3 end=point+vto_end;
 
-  // smooth transition done if
-  // self is not centered on point
+  // give anim if not centered on point
   if(
 
     glm::distance(beg-vto_beg,point)
@@ -100,14 +102,15 @@ void Move::look_around_point(
 
   ) {
 
-    Move::smooth_to(dst,beg,end);
+    out=Move::async_smooth_to(dst,beg,end,8);
 
-  // ^self is centered on point,
-  // so simply snap to final position
+  // ^else we snap into place
   } else {
     dst.teleport(end);
 
   };
+
+  return out;
 
 };
 
@@ -131,7 +134,7 @@ void Move::drag(
 };
 
 // ---   *   ---   *   ---
-// eases into position
+// eases STEP into position
 
 void Move::smooth_to(
 
@@ -144,16 +147,86 @@ void Move::smooth_to(
 
 ) {
 
-  glm::vec3 vto      = end-beg;
-  float     distance = glm::length(vto);
+  glm::vec3 vto=(
+    (end-beg) * step
 
-  vto *=
-    step
-  * (distance > 0.001f)
-  ;
+  ) + beg;
 
-  dst.teleport(beg);
-  dst.move(vto);
+  dst.teleport(vto);
+
+};
+
+// ---   *   ---   *   ---
+// ^enqueued
+
+void Move::Async_Smooth::run(Node& dst) {
+
+  Move::smooth_to(
+
+    dst,
+
+    m_beg,m_end,
+    m_step * m_cnt
+
+  );
+
+  m_cnt++;
+  m_frames--;
+
+  if(! m_frames) {
+    dst.teleport(m_end);
+    m_cnt=0;
+
+  };
+
+};
+
+// ---   *   ---   *   ---
+// ^cstruc
+
+Move::Async_Smooth Move::async_smooth_to(
+
+  Node&      dst,
+
+  glm::vec3& beg,
+  glm::vec3& end,
+
+  uint32_t   frames
+
+) {
+
+  Async_Smooth out={
+
+    .m_beg    = beg,
+    .m_end    = end,
+    .m_frames = frames,
+
+    .m_cnt    = 0,
+    .m_step   = 1.0f/frames
+
+  };
+
+  out.run(dst);
+  return out;
+
+};
+
+// ---   *   ---   *   ---
+// get X close/farther from point
+
+void Move::zoom(
+
+  Node&      dst,
+  glm::vec3& point,
+
+  float      x
+
+) {
+
+  auto vto=(point-dst.get_pos()) * x;
+
+  dst.set_linvel(vto);
+  dst.lin_fmotion();
 
 };
 
