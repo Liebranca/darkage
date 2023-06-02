@@ -16,7 +16,7 @@ class View {
 
 public:
 
-  VERSION   "v0.00.2b";
+  VERSION   "v0.00.3b";
   AUTHOR    "IBN-3DILA";
 
 // ---   *   ---   *   ---
@@ -27,6 +27,7 @@ private:
   struct Cache {
 
     glm::vec2 mouse_motion = {0,0};
+    glm::vec2 mouse_pos    = {0,0};
 
     glm::vec3 cam_target   = {0,0,0};
     glm::vec3 cam_to_vto   = {0,0,0};
@@ -45,10 +46,13 @@ private:
 
   // cache-calc rat movement
   // times frame delta
-  static void get_mouse_motion(void);
+  static void calc_mouse_motion(void);
+
+  // cache-calc mouse position
+  static void calc_mouse_pos(void);
 
   // cache-calc camera to origin
-  static void get_cam_to(void);
+  static void calc_cam_to(void);
 
 // ---   *   ---   *   ---
 // iface
@@ -59,6 +63,12 @@ public:
   // frame delta from cache
   static inline glm::vec2& mouse_motion(void) {
     return m_cache().mouse_motion;
+
+  };
+
+  // get rat position
+  static inline glm::vec2& mouse_pos(void) {
+    return m_cache().mouse_pos;
 
   };
 
@@ -93,6 +103,9 @@ public:
 
   // ^move camera X away/closer to target
   static void mouse_zoom(float x);
+
+  // cast ray from camera to cursor
+  static void mouse_over(void);
 
   // common control scheme for
   // controling a 3D viewport

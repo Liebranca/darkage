@@ -19,7 +19,7 @@
 // get rat movement times
 // frame delta and store it
 
-void View::get_mouse_motion(void) {
+void View::calc_mouse_motion(void) {
 
   auto& Chasm = CHASM::ice();
   auto& Sin   = SIN::ice();
@@ -32,19 +32,39 @@ void View::get_mouse_motion(void) {
 };
 
 // ---   *   ---   *   ---
+// cache-calc mouse position
+
+void View::calc_mouse_pos(void) {
+
+  auto& Chasm = CHASM::ice();
+
+  auto& rat   = Chasm.ev.get_rat();
+  auto& size  = Chasm.win.size();
+
+  auto& pos   = rat.get_position();
+
+  m_cache().mouse_pos={
+    -((float(pos.x)/size.x) - 0.5 ),
+    -((float(pos.y)/size.y) - 0.5 )
+
+  };
+
+};
+
+// ---   *   ---   *   ---
 // cache-calc camera to origin
 
 // TODO: movable camera target
 
-void View::get_cam_to(void) {
+void View::calc_cam_to(void) {
 
   auto& Sin    = SIN::ice();
   auto& cam    = Sin.cam;
 
   auto& target = View::cam_target();
 
-  m_cache().cam_to_vto = cam.get_pos()-target;
-  m_cache().cam_to_dist=glm::length(
+  m_cache().cam_to_vto  = cam.get_pos()-target;
+  m_cache().cam_to_dist = glm::length(
     m_cache().cam_to_vto
 
   );
@@ -124,10 +144,44 @@ void View::mouse_drag(void) {
 
 void View::mouse_zoom(float x) {
 
-  auto& Sin   = SIN::ice();
-  auto& cam   = Sin.cam;
+  auto& Sin = SIN::ice();
+  auto& cam = Sin.cam;
 
   Move::zoom(cam,View::cam_target(),x);
+
+};
+
+// ---   *   ---   *   ---
+// cast ray from camera to cursor
+
+void View::mouse_over(void) {
+
+  auto& Sin = SIN::ice();
+  auto& cam = Sin.cam;
+
+  auto& pos = View::mouse_pos();
+
+  printf("%f %f\n",pos.x,pos.y);
+
+//  // face camera towards mouse
+//  auto fwd=Move::n_by_motion(
+//    cam.get_fwd(),pos
+//
+//  ) * m_cache().cam_to_dist;
+
+  auto rot=Move::q_from_motion(
+    cam.get_hax(),pos
+
+  );
+
+  auto fwd=glm::normalize(
+    cam.get_fwd()
+  * rot
+
+  ) * View::cam_to_dist();
+
+  auto& plane=Sin.nodes[0];
+  plane.teleport(fwd);
 
 };
 
@@ -168,6 +222,8 @@ void View::mouse_3D(
 
   };
 
+  View::mouse_over();
+
 };
 
 // ---   *   ---   *   ---
@@ -179,8 +235,9 @@ void View::clear_cache(void) {
 };
 
 void View::load_cache(void) {
-  View::get_mouse_motion();
-  View::get_cam_to();
+  View::calc_mouse_motion();
+  View::calc_mouse_pos();
+  View::calc_cam_to();
 
 };
 

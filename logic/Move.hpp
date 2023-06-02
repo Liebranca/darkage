@@ -60,7 +60,29 @@ public:
   static void clear(Node& dst);
 
 // ---   *   ---   *   ---
+// quick mathutils
+
+  static glm::quat q_from_motion(
+    glm::vec3& n,
+    glm::vec2& motion
+
+  );
+
+//  static glm::quat q_from_abs(
+//    glm::vec3& n,
+//    glm::vec2& abs
+//
+//  );
+
+  static glm::vec3 n_by_motion(
+    glm::vec3& n,
+    glm::vec2& motion
+
+  );
+
+// ---   *   ---   *   ---
 // angular motion
+
   static void look_around(
 
     Node&      dst,

@@ -30,6 +30,56 @@ void Move::clear(Node& dst) {
 };
 
 // ---   *   ---   *   ---
+// offset direction by motion
+
+glm::quat Move::q_from_motion(
+  glm::vec3& n,
+  glm::vec2& motion
+
+) {
+
+  auto base = n * motion.y;
+
+  glm::quat y = {1,-base.x,base.y,-base.z};
+  glm::quat x = {1,0,-motion.x,0};
+
+  return x*y;
+
+};
+
+//// ---   *   ---   *   ---
+//// offset direction by position
+//
+//glm::quat Move::q_from_abs(
+//  glm::vec3& n,
+//  glm::vec2& motion
+//
+//) {
+//
+//  auto base = n * motion.y;
+//
+//  glm::quat y = {1,-base.x,base.y,-base.z};
+//  glm::quat x = {1,0,-motion.x,0};
+//
+//  return x*y;
+//
+//};
+
+// ---   *   ---   *   ---
+// ^gives unit n times q
+
+glm::vec3 Move::n_by_motion(
+  glm::vec3& n,
+  glm::vec2& motion
+
+) {
+
+  auto q=q_from_motion(n,motion);
+  return glm::normalize(n*q);
+
+};
+
+// ---   *   ---   *   ---
 // rotate around self
 
 void Move::look_around(
@@ -41,14 +91,12 @@ void Move::look_around(
 
 ) {
 
-  auto hax=dst.get_hax() * motion.y;
+  glm::quat r=Move::q_from_motion(
+    dst.get_hax(),motion
 
-  glm::quat y={1,-hax.x,hax.y,-hax.z};
-  glm::quat x={1,0,-motion.x,0};
+  );
 
-  glm::quat r=x*y;
   glm::vec3 v={r.x,r.y,r.z};
-
   v*=mul;
 
   dst.set_angvel(v);

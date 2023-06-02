@@ -2,8 +2,11 @@
 
 *> Viewport
 
-~ Navigate around point
-~ ^ reset navigation point
+~ Raycast to cursor
+
+x Navigate around point
+x ^ reset navigation point
+~ ^ set navigation point
 
 ~ Mesh load
 ~ ^ edit
