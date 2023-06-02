@@ -14,7 +14,7 @@ class Move {
 
 public:
 
-  VERSION   "v0.00.2b";
+  VERSION   "v0.00.3b";
   AUTHOR    "IBN-3DILA";
 
 // ---   *   ---   *   ---
@@ -26,6 +26,55 @@ private:
 // iface
 
 public:
+
+  // wipes all loaded velocities
+  static void clear(Node& dst);
+
+// ---   *   ---   *   ---
+// angular motion
+  static void look_around(
+
+    Node&      dst,
+    glm::vec2& motion,
+
+    float      mul=4.0f
+
+  );
+
+  static void look_around_point(
+
+    Node&      dst,
+
+    glm::vec2& motion,
+    glm::vec3& point,
+
+    float      distance,
+    float      mul=4.0f
+
+  );
+
+// ---   *   ---   *   ---
+// linear motion
+
+  static void drag(
+
+    Node&      dst,
+    glm::vec2& motion,
+
+    float      mul=4.0f
+
+  );
+
+  static glm::vec3 smooth_to(
+    glm::vec3& beg,
+    glm::vec3& end,
+
+    float      step=1.0f
+
+  );
+
+// ---   *   ---   *   ---
+// one liners
 
   static void fwd(Node& dst,float mul=4.0f);
   static void left(Node& dst,float mul=4.0f);
@@ -45,29 +94,6 @@ public:
 
   static void player_stop_z(void);
   static void player_stop_x(void);
-
-// ---   *   ---   *   ---
-// angular control
-
-  static void look_around(
-
-    Node&      dst,
-    glm::vec2& motion,
-
-    float      mul=4.0f
-
-  );
-
-  static void look_around_point(
-
-    Node&      dst,
-
-    glm::vec2& motion,
-    glm::vec3& point,
-
-    float      mul=4.0f
-
-  );
 
 };
 

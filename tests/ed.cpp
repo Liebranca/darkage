@@ -2,7 +2,9 @@
 // deps
 
   #include "Dark.hpp"
+
   #include "logic/Move.hpp"
+  #include "logic/View.hpp"
 
 // ---   *   ---   *   ---
 // spawn meshes
@@ -36,35 +38,8 @@ void load_objects(void) {
 
 int logic(void* data) {
 
-  auto& Sin   = SIN::ice();
-  auto& Chasm = CHASM::ice();
-
-  auto& rat   = Chasm.ev.get_rat();
-  auto  mo    = rat.get_motion(0.01f);
-
-  auto& cam   = Sin.cam;
-
-  bool dx = fabs(mo.y) > 0.0001f;
-  bool dy = fabs(mo.x) > 0.0001f;
-
-  if(dx || dy) {
-    glm::vec3 origin {0,0,0};
-    Move::look_around_point(cam,mo,origin);
-
-  };
-
-  auto lclick = rat.clicks(Rat::LEFT);
-  auto rclick = rat.clicks(Rat::RIGHT);
-
-  if(lclick || rclick) {
-
-    float sign = (lclick) ? -1 : 1;
-
-    cam.set_lindirn_ax(2,sign * 4);
-
-  };
-
-  cam.lin_fmotion();
+  View::load_cache();
+  View::mouse_3D();
 
   return 1;
 
