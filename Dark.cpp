@@ -99,8 +99,8 @@ void DARK::spawn_window(
 
 void DARK::spawn_camera(
 
-  const glm::vec3& pos,
-  const glm::quat& rot,
+  const vec3& pos,
+  const quat& rot,
 
   bool ortho
 

@@ -52,7 +52,7 @@ void View::calc_mouse_pos(void) {
   float sz_y  = float(size.y);
 
   // screen cords
-  glm::vec4 cords {
+  vec4 cords {
      -( ((x/sz_x) * 2.0f ) - 1.0f),
       ( ((y/sz_y) * 2.0f ) - 1.0f),
 
@@ -60,11 +60,11 @@ void View::calc_mouse_pos(void) {
 
   };
 
-  m_cache().mouse_pos_s=glm::vec2(cords);
+  m_cache().mouse_pos_s=vec2(cords);
 
   // ^xform to world coords
   cords=cam.get_stow() * cords;
-  m_cache().mouse_pos_w=glm::vec3(cords);
+  m_cache().mouse_pos_w=vec3(cords);
 
 };
 
@@ -106,7 +106,7 @@ void View::mouse_look(void) {
 // ---   *   ---   *   ---
 // ^rotate camera around point
 
-void View::mouse_look_at(glm::vec3& point) {
+void View::mouse_look_at(vec3& point) {
 
   auto& Sin   = SIN::ice();
   auto& Chasm = CHASM::ice();
@@ -197,7 +197,7 @@ void View::mouse_over(void) {
   ) * -10.0f;
 
   cube.teleport(fwd2);
-  Sin.draw_line(fwd,fwd2);
+//  Sin.draw_line(fwd,fwd2);
 
 //  Gaol::Line ray;
 //
@@ -208,7 +208,7 @@ void View::mouse_over(void) {
 //
 //  if(col.hit()) {
 //
-//    glm::vec3 a=col.point();
+//    vec3 a=col.point();
 //    a=a+glm::normalize(-fwd)*2.0f;
 //
 //    point.teleport(a);

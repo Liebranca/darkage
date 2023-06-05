@@ -4,7 +4,7 @@
 // ---   *   ---   *   ---
 // deps
 
-  #include "bitter/kvrnel/Style.hpp"
+  #include "bitter/kvrnel/GLM.hpp"
 
   #include "chasm/Chasm.hpp"
   #include "sin/Sin.hpp"
@@ -30,7 +30,7 @@ public:
     float      znear  = 0.1f;
     float      zfar   = 100.0f;
 
-    glm::ivec2 size   = {640,480};
+    ivec2 size   = {640,480};
     uint64_t   wflags = Win::DO_MOUSE_TRAP;
 
     bool       full   = false;
@@ -88,8 +88,8 @@ public:
 
   void spawn_camera(
 
-    const glm::vec3& pos={0,0,10},
-    const glm::quat& rot={1,0,0,0},
+    const vec3& pos={0,0,10},
+    const quat& rot={1,0,0,0},
 
     bool ortho=false
 

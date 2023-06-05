@@ -4,7 +4,7 @@
 // ---   *   ---   *   ---
 // deps
 
-  #include "bitter/kvrnel/Style.hpp"
+  #include "bitter/kvrnel/GLM.hpp"
   #include "sin/world/Node.hpp"
 
 // ---   *   ---   *   ---
@@ -23,8 +23,8 @@ public:
   struct Async_Smooth {
 
     // input
-    glm::vec3 m_beg;
-    glm::vec3 m_end;
+    vec3 m_beg;
+    vec3 m_end;
     uint32_t  m_frames = 0;
 
     // handled
@@ -62,21 +62,21 @@ public:
 // ---   *   ---   *   ---
 // quick mathutils
 
-  static glm::quat q_from_motion(
-    glm::vec3& n,
-    glm::vec2& motion
+  static quat q_from_motion(
+    vec3& n,
+    vec2& motion
 
   );
 
-//  static glm::quat q_from_abs(
-//    glm::vec3& n,
-//    glm::vec2& abs
+//  static quat q_from_abs(
+//    vec3& n,
+//    vec2& abs
 //
 //  );
 
-  static glm::vec3 n_by_motion(
-    glm::vec3& n,
-    glm::vec2& motion
+  static vec3 n_by_motion(
+    vec3& n,
+    vec2& motion
 
   );
 
@@ -86,7 +86,7 @@ public:
   static void look_around(
 
     Node&      dst,
-    glm::vec2& motion,
+    vec2& motion,
 
     float      mul=4.0f
 
@@ -96,8 +96,8 @@ public:
 
     Node&      dst,
 
-    glm::vec2& motion,
-    glm::vec3& point,
+    vec2& motion,
+    vec3& point,
 
     float      distance,
     float      mul=4.0f
@@ -110,7 +110,7 @@ public:
   static void drag(
 
     Node&      dst,
-    glm::vec2& motion,
+    vec2& motion,
 
     float      mul=4.0f
 
@@ -120,8 +120,8 @@ public:
 
     Node&      dst,
 
-    glm::vec3& beg,
-    glm::vec3& end,
+    vec3& beg,
+    vec3& end,
 
     float      step
 
@@ -131,8 +131,8 @@ public:
 
     Node&      dst,
 
-    glm::vec3& beg,
-    glm::vec3& end,
+    vec3& beg,
+    vec3& end,
 
     uint32_t   frames=8
 
@@ -141,7 +141,7 @@ public:
   static void zoom(
 
     Node&      dst,
-    glm::vec3& point,
+    vec3& point,
 
     float      x
 

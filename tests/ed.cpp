@@ -26,7 +26,7 @@ void load_resources(void) {
   Gaol::Box box0;
   Gaol::Box box1;
 
-  glm::vec3 origin {0,-0.5f,0};
+  vec3 origin {0,-0.5f,0};
 
   // target
   box0.set(origin,0.5f,1,0.5f);

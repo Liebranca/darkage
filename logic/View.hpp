@@ -4,7 +4,7 @@
 // ---   *   ---   *   ---
 // deps
 
-  #include "bitter/kvrnel/Style.hpp"
+  #include "bitter/kvrnel/GLM.hpp"
 
   #include "chasm/input/Rat.hpp"
   #include "logic/Move.hpp"
@@ -26,14 +26,14 @@ private:
 
   struct Cache {
 
-    glm::vec2 mouse_motion = {0,0};
+    vec2 mouse_motion = {0,0};
 
     // screen/world cords
-    glm::vec2 mouse_pos_s  = {0,0};
-    glm::vec3 mouse_pos_w  = {0,0,0};
+    vec2 mouse_pos_s  = {0,0};
+    vec3 mouse_pos_w  = {0,0,0};
 
-    glm::vec3 cam_target   = {0,0,0};
-    glm::vec3 cam_to_vto   = {0,0,0};
+    vec3 cam_target   = {0,0,0};
+    vec3 cam_to_vto   = {0,0,0};
     float     cam_to_dist  = 10.0f;
 
     Move::Async_Smooth xition;
@@ -64,25 +64,25 @@ public:
 
   // get rat movement times
   // frame delta from cache
-  static inline glm::vec2& mouse_motion(void) {
+  static inline vec2& mouse_motion(void) {
     return m_cache().mouse_motion;
 
   };
 
   // get rat position in screen cords
-  static inline glm::vec2& mouse_pos_s(void) {
+  static inline vec2& mouse_pos_s(void) {
     return m_cache().mouse_pos_s;
 
   };
 
   // ^world
-  static inline glm::vec3& mouse_pos_w(void) {
+  static inline vec3& mouse_pos_w(void) {
     return m_cache().mouse_pos_w;
 
   };
 
   // get direction from camera to target
-  static inline glm::vec3& cam_to_vto(void) {
+  static inline vec3& cam_to_vto(void) {
     return m_cache().cam_to_vto;
 
   };
@@ -93,7 +93,7 @@ public:
   };
 
   // ^selfex
-  static inline glm::vec3& cam_target(void) {
+  static inline vec3& cam_target(void) {
     return m_cache().cam_target;
 
   };
@@ -103,7 +103,7 @@ public:
   static void mouse_look(void);
 
   // ^rotate camera around point
-  static void mouse_look_at(glm::vec3& point);
+  static void mouse_look_at(vec3& point);
 
   // ^drag camera around
   static void mouse_drag(void);

@@ -20,7 +20,7 @@
 
 void Move::clear(Node& dst) {
 
-  static glm::vec3 zero {0,0,0};
+  static vec3 zero {0,0,0};
 
   dst.set_linvel(zero);
   dst.set_angvel(zero);
@@ -32,16 +32,16 @@ void Move::clear(Node& dst) {
 // ---   *   ---   *   ---
 // offset direction by motion
 
-glm::quat Move::q_from_motion(
-  glm::vec3& n,
-  glm::vec2& motion
+quat Move::q_from_motion(
+  vec3& n,
+  vec2& motion
 
 ) {
 
   auto base = n * motion.y;
 
-  glm::quat y = {1,-base.x,base.y,-base.z};
-  glm::quat x = {1,0,-motion.x,0};
+  quat y = {1,-base.x,base.y,-base.z};
+  quat x = {1,0,-motion.x,0};
 
   return x*y;
 
@@ -50,16 +50,16 @@ glm::quat Move::q_from_motion(
 //// ---   *   ---   *   ---
 //// offset direction by position
 //
-//glm::quat Move::q_from_abs(
-//  glm::vec3& n,
-//  glm::vec2& motion
+//quat Move::q_from_abs(
+//  vec3& n,
+//  vec2& motion
 //
 //) {
 //
 //  auto base = n * motion.y;
 //
-//  glm::quat y = {1,-base.x,base.y,-base.z};
-//  glm::quat x = {1,0,-motion.x,0};
+//  quat y = {1,-base.x,base.y,-base.z};
+//  quat x = {1,0,-motion.x,0};
 //
 //  return x*y;
 //
@@ -68,9 +68,9 @@ glm::quat Move::q_from_motion(
 // ---   *   ---   *   ---
 // ^gives unit n times q
 
-glm::vec3 Move::n_by_motion(
-  glm::vec3& n,
-  glm::vec2& motion
+vec3 Move::n_by_motion(
+  vec3& n,
+  vec2& motion
 
 ) {
 
@@ -85,18 +85,18 @@ glm::vec3 Move::n_by_motion(
 void Move::look_around(
 
   Node&      dst,
-  glm::vec2& motion,
+  vec2& motion,
 
   float      mul
 
 ) {
 
-  glm::quat r=Move::q_from_motion(
+  quat r=Move::q_from_motion(
     dst.get_hax(),motion
 
   );
 
-  glm::vec3 v={r.x,r.y,r.z};
+  vec3 v={r.x,r.y,r.z};
   v*=mul;
 
   dst.set_angvel(v);
@@ -111,8 +111,8 @@ Move::Async_Smooth Move::look_around_point(
 
   Node&      dst,
 
-  glm::vec2& motion,
-  glm::vec3& point,
+  vec2& motion,
+  vec3& point,
 
   float      distance,
   float      mul
@@ -123,8 +123,8 @@ Move::Async_Smooth Move::look_around_point(
   Async_Smooth out;
 
   // starting position -> point
-  glm::vec3 beg=dst.get_pos();
-  glm::vec3 vto_beg=
+  vec3 beg=dst.get_pos();
+  vec3 vto_beg=
     dst.get_fwd()
   * -distance
   ;
@@ -135,12 +135,12 @@ Move::Async_Smooth Move::look_around_point(
   Move::look_around(dst,motion,mul);
 
   // point -> new orientation
-  glm::vec3 vto_end=
+  vec3 vto_end=
     dst.get_fwd()
   * -distance
   ;
 
-  glm::vec3 end=point+vto_end;
+  vec3 end=point+vto_end;
 
   // give anim if not centered on point
   if(
@@ -168,7 +168,7 @@ Move::Async_Smooth Move::look_around_point(
 void Move::drag(
 
   Node&      dst,
-  glm::vec2& motion,
+  vec2& motion,
 
   float      mul
 
@@ -188,14 +188,14 @@ void Move::smooth_to(
 
   Node&      dst,
 
-  glm::vec3& beg,
-  glm::vec3& end,
+  vec3& beg,
+  vec3& end,
 
   float      step
 
 ) {
 
-  glm::vec3 vto=(
+  vec3 vto=(
     (end-beg) * step
 
   ) + beg;
@@ -236,8 +236,8 @@ Move::Async_Smooth Move::async_smooth_to(
 
   Node&      dst,
 
-  glm::vec3& beg,
-  glm::vec3& end,
+  vec3& beg,
+  vec3& end,
 
   uint32_t   frames
 
@@ -265,7 +265,7 @@ Move::Async_Smooth Move::async_smooth_to(
 void Move::zoom(
 
   Node&      dst,
-  glm::vec3& point,
+  vec3& point,
 
   float      x
 
