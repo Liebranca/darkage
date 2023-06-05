@@ -37,17 +37,34 @@ void View::calc_mouse_motion(void) {
 void View::calc_mouse_pos(void) {
 
   auto& Chasm = CHASM::ice();
+  auto& Sin   = SIN::ice();
 
   auto& rat   = Chasm.ev.get_rat();
   auto& size  = Chasm.win.size();
+  auto& cam   = Sin.cam;
 
   auto& pos   = rat.get_position();
 
-  m_cache().mouse_pos={
-    -((float(pos.x)/size.x) - 0.5 ),
-    -((float(pos.y)/size.y) - 0.5 )
+  float x     = float(pos.x);
+  float y     = float(pos.y);
+
+  float sz_x  = float(size.x);
+  float sz_y  = float(size.y);
+
+  // screen cords
+  glm::vec4 cords {
+     -( ((x/sz_x) * 2.0f ) - 1.0f),
+      ( ((y/sz_y) * 2.0f ) - 1.0f),
+
+    1.0f,1
 
   };
+
+  m_cache().mouse_pos_s=glm::vec2(cords);
+
+  // ^xform to world coords
+  cords=cam.get_stow() * cords;
+  m_cache().mouse_pos_w=glm::vec3(cords);
 
 };
 
@@ -159,29 +176,47 @@ void View::mouse_over(void) {
   auto& Sin = SIN::ice();
   auto& cam = Sin.cam;
 
-  auto& pos = View::mouse_pos();
-
-  printf("%f %f\n",pos.x,pos.y);
-
-//  // face camera towards mouse
-//  auto fwd=Move::n_by_motion(
-//    cam.get_fwd(),pos
-//
-//  ) * m_cache().cam_to_dist;
-
-  auto rot=Move::q_from_motion(
-    cam.get_hax(),pos
-
-  );
+  auto  pos =
+    View::mouse_pos_w()
+//  + cam.get_pos()
+  ;
 
   auto fwd=glm::normalize(
-    cam.get_fwd()
-  * rot
+    pos
 
-  ) * View::cam_to_dist();
+  ) * -1.0f;
 
-  auto& plane=Sin.nodes[0];
-  plane.teleport(fwd);
+  // test
+  auto& cube  = Sin.nodes[0];
+  auto& point = Sin.nodes[1];
+
+  point.teleport(fwd);
+  auto fwd2=glm::normalize(
+    pos-cam.get_fwd()
+
+  ) * -10.0f;
+
+  cube.teleport(fwd2);
+  Sin.draw_line(fwd,fwd2);
+
+//  Gaol::Line ray;
+//
+//  ray.set(cam.get_pos(),fwd);
+//
+//  auto& box=cube.bound().box();
+//  auto  col=box.isect_line(ray);
+//
+//  if(col.hit()) {
+//
+//    glm::vec3 a=col.point();
+//    a=a+glm::normalize(-fwd)*2.0f;
+//
+//    point.teleport(a);
+//
+//  } else {
+//    point.teleport(fwd);
+//
+//  };
 
 };
 

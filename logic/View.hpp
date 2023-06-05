@@ -16,7 +16,7 @@ class View {
 
 public:
 
-  VERSION   "v0.00.3b";
+  VERSION   "v0.00.4b";
   AUTHOR    "IBN-3DILA";
 
 // ---   *   ---   *   ---
@@ -27,7 +27,10 @@ private:
   struct Cache {
 
     glm::vec2 mouse_motion = {0,0};
-    glm::vec2 mouse_pos    = {0,0};
+
+    // screen/world cords
+    glm::vec2 mouse_pos_s  = {0,0};
+    glm::vec3 mouse_pos_w  = {0,0,0};
 
     glm::vec3 cam_target   = {0,0,0};
     glm::vec3 cam_to_vto   = {0,0,0};
@@ -66,9 +69,15 @@ public:
 
   };
 
-  // get rat position
-  static inline glm::vec2& mouse_pos(void) {
-    return m_cache().mouse_pos;
+  // get rat position in screen cords
+  static inline glm::vec2& mouse_pos_s(void) {
+    return m_cache().mouse_pos_s;
+
+  };
+
+  // ^world
+  static inline glm::vec3& mouse_pos_w(void) {
+    return m_cache().mouse_pos_w;
 
   };
 
