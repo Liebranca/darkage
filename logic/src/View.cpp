@@ -22,12 +22,12 @@
 void View::calc_mouse_motion(void) {
 
   auto& Chasm = CHASM::ice();
-  auto& Sin   = SIN::ice();
+  auto& Dark  = DARK::ice();
 
   auto& rat   = Chasm.ev.get_rat();
 
   m_cache().mouse_motion=
-    rat.get_motion(Sin.fBy());
+    rat.get_motion(Dark.fBy());
 
 };
 
@@ -37,11 +37,11 @@ void View::calc_mouse_motion(void) {
 void View::calc_mouse_pos(void) {
 
   auto& Chasm = CHASM::ice();
-  auto& Sin   = SIN::ice();
+  auto& Dark  = DARK::ice();
 
   auto& rat   = Chasm.ev.get_rat();
   auto& size  = Chasm.win.size();
-  auto& cam   = Sin.cam;
+  auto& cam   = Dark.cam;
 
   auto& pos   = rat.get_position();
 
@@ -69,14 +69,34 @@ void View::calc_mouse_pos(void) {
 };
 
 // ---   *   ---   *   ---
+// cache-calc camera to mouse ray
+
+void View::calc_mouse_ray(void) {
+
+  auto& Dark = DARK::ice();
+  auto& cam  = Dark.cam;
+
+  auto  pos  = glm::normalize(
+    View::mouse_pos_w()
+
+  );
+
+  auto a = cam.get_pos() + pos;
+  auto b = a + pos * cam.get_zfar();
+
+  m_cache().mouse_ray.set(a,b);
+
+};
+
+// ---   *   ---   *   ---
 // cache-calc camera to origin
 
 // TODO: movable camera target
 
 void View::calc_cam_to(void) {
 
-  auto& Sin    = SIN::ice();
-  auto& cam    = Sin.cam;
+  auto& Dark   = DARK::ice();
+  auto& cam    = Dark.cam;
 
   auto& target = View::cam_target();
 
@@ -94,10 +114,10 @@ void View::calc_cam_to(void) {
 
 void View::mouse_look(void) {
 
-  auto& Sin = SIN::ice();
+  auto& Dark = DARK::ice();
 
-  auto& mo  = View::mouse_motion();
-  auto& cam = Sin.cam;
+  auto& mo   = View::mouse_motion();
+  auto& cam  = Dark.cam;
 
   Move::look_around(cam,mo);
 
@@ -108,11 +128,11 @@ void View::mouse_look(void) {
 
 void View::mouse_look_at(vec3& point) {
 
-  auto& Sin   = SIN::ice();
+  auto& Dark  = DARK::ice();
   auto& Chasm = CHASM::ice();
 
   auto& mo    = View::mouse_motion();
-  auto& cam   = Sin.cam;
+  auto& cam   = Dark.cam;
 
   Chasm.win.enable_mouse_trap();
 
@@ -128,9 +148,17 @@ void View::mouse_look_at(vec3& point) {
 
     );
 
-  // ^finish transition in Q
-  } else {
-    m_cache().xition.run(cam);
+  };
+
+};
+
+// ---   *   ---   *   ---
+// ^chk-run pending transition
+
+void View::pending_xition(void) {
+
+  if(m_cache().xition.valid()) {
+    m_cache().xition.run(DARK::ice().cam);
 
   };
 
@@ -141,11 +169,11 @@ void View::mouse_look_at(vec3& point) {
 
 void View::mouse_drag(void) {
 
-  auto& Sin   = SIN::ice();
+  auto& Dark  = DARK::ice();
   auto& Chasm = CHASM::ice();
 
   auto  mo    = View::mouse_motion();
-  auto& cam   = Sin.cam;
+  auto& cam   = Dark.cam;
 
   mo.x *= Chasm.win.hsize().x/6;
   mo.y *= Chasm.win.hsize().y/6;
@@ -161,54 +189,53 @@ void View::mouse_drag(void) {
 
 void View::mouse_zoom(float x) {
 
-  auto& Sin = SIN::ice();
-  auto& cam = Sin.cam;
+  auto& Dark = DARK::ice();
+  auto& cam  = Dark.cam;
 
   Move::zoom(cam,View::cam_target(),x);
 
 };
 
 // ---   *   ---   *   ---
-// cast ray from camera to cursor
+// mouse hover on specific object
 
-void View::mouse_over(void) {
+Collision View::mouse_over(Node& node) {
 
-  auto& Sin = SIN::ice();
-  auto& cam = Sin.cam;
+  Collision out;
 
-  auto  pos = glm::normalize(
-    View::mouse_pos_w()
+  auto& box = node.bound().box();
+  auto& ray = View::mouse_ray();
 
-  );
+  out       = box.isect_ray(ray);
 
-  auto a = cam.get_pos() + pos;
-  auto b = a + pos * 100.0f;
-
-  // test
-  auto& cube  = Sin.nodes[0];
-  auto& point = Sin.nodes[1];
-
-  Gaol::Line ray;
-
-  ray.set(a,b);
-
-  auto& box=cube.bound().box();
-  auto  col=box.isect_ray(ray);
-
-  uint8_t line_color=SIN::RED;
-
-  if(col.hit()) {
-    line_color=SIN::GREEN;
-    point.teleport(col.point());
-    printf("HIT\n");
-
-  } else {
-    point.teleport(b);
-    printf("NO HIT\n");
+  if(out.hit()) {
+    out.id=node.get_world_id()+1;
 
   };
 
-  Sin.draw_line(a,b,line_color);
+  return out;
+
+};
+
+// ---   *   ---   *   ---
+// ^any visible object
+
+Collision View::mouse_over_any(void) {
+
+  Collision out;
+  auto& Dark=DARK::ice();
+
+  for(auto& node : Dark.visible_objects()) {
+
+    out=View::mouse_over(node);
+    if(out.hit()) {
+      break;
+
+    };
+
+  };
+
+  return out;
 
 };
 
@@ -223,14 +250,16 @@ void View::mouse_3D(
 ) {
 
   auto& Chasm   = CHASM::ice();
-  auto& Sin     = SIN::ice();
+  auto& Dark    = DARK::ice();
 
   auto& rat     = Chasm.ev.get_rat();
-  auto& cam     = Sin.cam;
+  auto& cam     = Dark.cam;
 
   auto  do_drag = rat.clicks(drag_b);
   auto  do_view = rat.clicks(view_b);
   auto  do_zoom = rat.wheel() * 4;
+
+  View::pending_xition();
 
   if(do_view) {
     View::mouse_look_at(View::cam_target());
@@ -247,9 +276,14 @@ void View::mouse_3D(
   if(do_zoom) {
     View::mouse_zoom(do_zoom);
 
-  };
+    auto moa=View::mouse_over_any();
+    if(moa.hit()) {
+      auto& node=moa.node();
+      printf("HOVER ON %04u\n",node.get_world_id());
 
-  View::mouse_over();
+    };
+
+  };
 
 };
 
@@ -264,6 +298,7 @@ void View::clear_cache(void) {
 void View::load_cache(void) {
   View::calc_mouse_motion();
   View::calc_mouse_pos();
+  View::calc_mouse_ray();
   View::calc_cam_to();
 
 };

@@ -16,7 +16,7 @@ class View {
 
 public:
 
-  VERSION   "v0.00.6b";
+  VERSION   "v0.00.7b";
   AUTHOR    "IBN-3DILA";
 
 // ---   *   ---   *   ---
@@ -26,17 +26,18 @@ private:
 
   struct Cache {
 
-    vec2 mouse_motion = {0,0};
+    vec2  mouse_motion = {0,0};
 
     // screen/world cords
-    vec2 mouse_pos_s  = {0,0};
-    vec3 mouse_pos_w  = {0,0,0};
+    vec2  mouse_pos_s  = {0,0};
+    vec3  mouse_pos_w  = {0,0,0};
 
-    vec3 cam_target   = {0,0,0};
-    vec3 cam_to_vto   = {0,0,0};
-    float     cam_to_dist  = 10.0f;
+    vec3  cam_target   = {0,0,0};
+    vec3  cam_to_vto   = {0,0,0};
+    float cam_to_dist  = 10.0f;
 
     Move::Async_Smooth xition;
+    Gaol::Line mouse_ray;
 
   };
 
@@ -54,8 +55,14 @@ private:
   // cache-calc mouse position
   static void calc_mouse_pos(void);
 
+  // cache-calc camera to mouse ray
+  static void calc_mouse_ray(void);
+
   // cache-calc camera to origin
   static void calc_cam_to(void);
+
+  // chk-run pending transition
+  static void pending_xition(void);
 
 // ---   *   ---   *   ---
 // iface
@@ -78,6 +85,12 @@ public:
   // ^world
   static inline vec3& mouse_pos_w(void) {
     return m_cache().mouse_pos_w;
+
+  };
+
+  // get camera to mouse ray
+  static inline Gaol::Line& mouse_ray(void) {
+    return m_cache().mouse_ray;
 
   };
 
@@ -113,11 +126,14 @@ public:
   // ^move camera X away/closer to target
   static void mouse_zoom(float x);
 
-  // cast ray from camera to cursor
-  static void mouse_over(void);
+  // mouse hover on specific object
+  static Collision mouse_over(Node& node);
+
+  // ^any visible object
+  static Collision mouse_over_any(void);
 
   // common control scheme for
-  // controling a 3D viewport
+  // managing a 3D viewport
   static void mouse_3D(
     uint8_t drag_b=Rat::RIGHT,
     uint8_t view_b=Rat::LEFT

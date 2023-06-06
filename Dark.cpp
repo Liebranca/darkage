@@ -28,18 +28,6 @@ DARK::DARK(void) {
 };
 
 // ---   *   ---   *   ---
-// chasm wrapper
-//
-// circumvents needing a handle
-// to the window within Sin
-
-inline Clock& get_clock(void) {
-  auto& Chasm=CHASM::ice();
-  return Chasm.win.clock();
-
-};
-
-// ---   *   ---   *   ---
 // sin wrapper
 //
 // compiles params listed
@@ -55,11 +43,7 @@ void DARK::load_shaders(void) {
 // creates window accto this->screen
 
 void DARK::spawn_window(
-
-  std::string name,
-
-  CHASM::Loop draw_f,
-  CHASM::Loop logic_f
+  std::string name
 
 ) {
 
@@ -82,12 +66,9 @@ void DARK::spawn_window(
   Chasm.nit(win_desc,this->keyset);
   Chasm.win.set_ambient_color(8);
 
-  Chasm.draw  = draw_f;
-  Chasm.logic = logic_f;
-
-  // get handle to program clock
-  auto& Sin=SIN::ice();
-  Sin.get_clock=&get_clock;
+  // set loop routines
+  Chasm.draw  = DARK::draw;
+  Chasm.logic = DARK::logic;
 
   // compile *.sg
   this->load_shaders();
@@ -106,7 +87,8 @@ void DARK::spawn_camera(
 
 ) {
 
-  auto& Sin=SIN::ice();
+  auto&    Sin = SIN::ice();
+  uint32_t ubo = Sin.program->get_ubo(0);
 
   Camera::Lens lens={
     .width  = float(this->screen.size.x),
@@ -120,16 +102,66 @@ void DARK::spawn_camera(
 
   };
 
-  Sin.nit_camera(
+  cam.nit(pos,rot,lens,ubo);
 
-    pos,rot,lens,
+  if(ortho) {
+    cam.use_ortho();
 
-    Sin.program->get_ubo(0),
-    ortho
+  } else {
+    cam.use_persp();
+
+  };
+
+  cam.get_view();
+
+};
+
+// ---   *   ---   *   ---
+// create spacepart
+
+void DARK::spawn_world(void) {
+  uvec3 dim {1,1,1};
+  world.nit(dim);
+
+};
+
+// ---   *   ---   *   ---
+// push entity onto world
+
+Node& DARK::spawn_object(
+
+  uint32_t meshid,
+  uint8_t  type,
+
+  T3D      xform
+
+) {
+
+  auto&    Sin  = SIN::ice();
+  uint32_t mesh = Sin.sprites.size();
+
+  Sin.sprites.push_back(
+    Sin.batch->ice_asset(meshid)
 
   );
 
-};
+  Node::Bld bld={
+
+    .draw={
+      .batch = Sin.batch_id,
+      .mesh  = mesh,
+
+      .type  = type
+
+    },
+
+    .xform=xform
+
+  };
+
+  return world.push_node(bld);
+
+}
 
 // ---   *   ---   *   ---
 // runs application
@@ -150,6 +182,24 @@ void DARK::loop(void) {
 };
 
 // ---   *   ---   *   ---
+// draw prologue
+
+void DARK::draw_prologue(void) {
+  this->cam.get_view();
+  this->cam.get_visible();
+
+};
+
+// ---   *   ---   *   ---
+// ^epilogue
+
+void DARK::draw_epilogue(void) {
+  auto& Sin=SIN::ice();
+  Sin.draw_enqueued();
+
+};
+
+// ---   *   ---   *   ---
 // default drawing routine
 
 int DARK::defdraw(void* data) {
@@ -157,23 +207,37 @@ int DARK::defdraw(void* data) {
   auto& Sin = SIN::ice();
   auto  bat = (Nodes*) data;
 
-  // trigger camera update
-  Sin.cam.get_view();
-
   // walk objects
-  for(auto& idex : *bat) {
-    Sin.nodes[idex].draw();
+  for(auto& node : *bat) {
+    node.draw();
 
   };
 
-  Sin.draw_enqueued();
-
-  return 0;
+  return bat->size();
 
 };
 
 // ---   *   ---   *   ---
-// ^selfex
+// ^wrapper
+
+int DARK::draw(void* data) {
+
+  auto& Dark=DARK::ice();
+
+  Dark.draw_prologue();
+  int out=Dark.draw_f(data);
+
+  Dark.draw_epilogue();
+
+  return out;
+
+};
+
+// ---   *   ---   *   ---
+// ^TODO: same Fs for logic
+
+void DARK::logic_prologue(void) {};
+void DARK::logic_epilogue(void) {};
 
 int DARK::deflogic(void* data) {
   return 1;
@@ -181,11 +245,27 @@ int DARK::deflogic(void* data) {
 };
 
 // ---   *   ---   *   ---
+// ^wrapper
+
+int DARK::logic(void* data) {
+
+  auto& Dark=DARK::ice();
+
+  Dark.logic_prologue();
+  int out=Dark.logic_f(data);
+
+  Dark.logic_epilogue();
+
+  return out;
+
+};
+
+// ---   *   ---   *   ---
 // get user-controlled node
 
 Node& DARK::player(void) {
-  auto& Sin=SIN::ice();
-  return Sin.cam;
+  auto& Dark=DARK::ice();
+  return Dark.cam;
 
 };
 

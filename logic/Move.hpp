@@ -5,7 +5,7 @@
 // deps
 
   #include "bitter/kvrnel/GLM.hpp"
-  #include "sin/world/Node.hpp"
+  #include "world/Node.hpp"
 
 // ---   *   ---   *   ---
 // info

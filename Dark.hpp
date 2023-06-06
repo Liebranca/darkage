@@ -9,6 +9,9 @@
   #include "chasm/Chasm.hpp"
   #include "sin/Sin.hpp"
 
+  #include "world/Camera.hpp"
+  #include "world/World.hpp"
+
 // ---   *   ---   *   ---
 // info
 
@@ -16,7 +19,7 @@ class DARK {
 
 public:
 
-  VERSION   "v0.00.1b";
+  VERSION   "v0.00.2b";
   AUTHOR    "IBN-3DILA";
 
 // ---   *   ---   *   ---
@@ -24,32 +27,31 @@ public:
 
   struct Screen {
 
-    float      fov    = 45.0f;
-    float      scale  = 0.0055f;
+    float    fov    = 45.0f;
+    float    scale  = 0.0055f;
 
-    float      znear  = 0.1f;
-    float      zfar   = 100.0f;
+    float    znear  = 0.1f;
+    float    zfar   = 100.0f;
 
-    ivec2 size   = {640,480};
-    uint64_t   wflags = Win::DO_MOUSE_TRAP;
+    ivec2    size   = {640,480};
+    uint64_t wflags = Win::DO_MOUSE_TRAP;
 
-    bool       full   = false;
+    bool     full   = false;
 
   };
-
-  typedef std::vector<uint32_t> Nodes;
 
 // ---   *   ---   *   ---
 // attrs
 
   Screen       screen;
-  float        fps      = 60;
+  Camera       cam;
+
+  World        world;
 
   Kbd::Keyset  keyset;
   shader::List programs;
 
-  Nodes        draw_data;
-  Nodes        logic_data;
+  float        fps=60;
 
 // ---   *   ---   *   ---
 // default routines
@@ -57,10 +59,29 @@ public:
   static int defdraw(void* data);
   static int deflogic(void* data);
 
+  CHASM::Loop  draw_f  = &defdraw;
+  CHASM::Loop  logic_f = &deflogic;
+
 // ---   *   ---   *   ---
 // guts
 
 private:
+
+  // ^wrap around draw step
+  // with routines that run
+  // before and after
+  static int draw(void* data);
+  void draw_prologue(void);
+  void draw_epilogue(void);
+
+  // ^same for logic step
+  static int logic(void* data);
+  void logic_prologue(void);
+  void logic_epilogue(void);
+
+  Nodes draw_data;
+  Nodes logic_data;
+
   void load_shaders(void);
 
 // ---   *   ---   *   ---
@@ -78,11 +99,7 @@ public:
 // scene
 
   void spawn_window(
-
-    std::string name    = "dark",
-
-    CHASM::Loop draw_f  = &defdraw,
-    CHASM::Loop logic_f = &deflogic
+    std::string name="dark"
 
   );
 
@@ -95,12 +112,52 @@ public:
 
   );
 
+  void spawn_world(void);
+
+  Node& spawn_object(
+
+    uint32_t meshid,
+    uint8_t  type,
+
+    T3D      xform=T3D()
+
+  );
+
   void loop(void);
 
 // ---   *   ---   *   ---
 // getters
 
   static Node& player(void);
+
+  inline Nodes& visible_objects(void) {
+    return draw_data;
+
+  };
+
+// ---   *   ---   *   ---
+// program clock wrappers
+
+  inline Clock& get_clock(void) {
+    auto&  Chasm=CHASM::ice();
+    return Chasm.win.clock();
+
+  };
+
+  inline float fBy(void) {
+    return this->get_clock().fBy();
+
+  };
+
+  inline void set_timescale(float x) {
+    this->get_clock().set_scale(x);
+
+  };
+
+  inline float get_timescale(void) {
+    return this->get_clock().get_scale();
+
+  };
 
 };
 

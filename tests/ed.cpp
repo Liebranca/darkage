@@ -50,17 +50,9 @@ void load_resources(void) {
 void load_objects(void) {
 
   auto& Dark = DARK::ice();
-  auto& Sin  = SIN::ice();
 
-  Dark.draw_data.push_back(
-    Sin.new_node(0,Node::STATIC)
-
-  );
-
-  Dark.draw_data.push_back(
-    Sin.new_node(1,Node::STATIC)
-
-  );
+  Dark.spawn_object(0,Node::STATIC);
+  Dark.spawn_object(1,Node::STATIC);
 
 };
 
@@ -83,14 +75,10 @@ int main(void) {
 
   auto& Dark=DARK::ice();
 
-  Dark.spawn_window(
+  Dark.logic_f=logic;
 
-    "sined",
-
-    &DARK::defdraw,
-    &logic
-
-  );
+  Dark.spawn_window("sined");
+  Dark.spawn_world();
 
   load_resources();
   load_objects();
