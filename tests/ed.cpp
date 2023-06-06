@@ -15,7 +15,7 @@ void load_resources(void) {
 
   auto& Sin=SIN::ice();
 
-  Sin.new_batch(SIN::PROGRAM1);
+  Sin.new_batch(SIN::PROGRAM2);
 
   uint32_t me0=Sin.batch->new_edit();
   uint32_t me1=Sin.batch->new_edit();
@@ -26,19 +26,21 @@ void load_resources(void) {
   Gaol::Box box0;
   Gaol::Box box1;
 
-  vec3 origin {0,-0.5f,0};
+  vec3 origin {0,0,0};
 
   // target
-  box0.set(origin,0.5f,1,0.5f);
+  box0.set(origin,0.5f,0.5f,0.5f);
   box0.to_mesh(p0);
+  p0.tris_to_lines();
 
-  Sin.batch->repl(me0,p0);
+  Sin.batch->repl(me0,p0,GL_LINES);
 
   // pointer
-  box1.set(origin,0.1f,0.2f,0.1f);
+  box1.set(origin,0.1f,0.1f,0.1f);
   box1.to_mesh(p1);
+  p1.tris_to_lines();
 
-  Sin.batch->repl(me1,p1);
+  Sin.batch->repl(me1,p1,GL_LINES);
 
 };
 

@@ -53,8 +53,8 @@ void View::calc_mouse_pos(void) {
 
   // screen cords
   vec4 cords {
-     -( ((x/sz_x) * 2.0f ) - 1.0f),
-      ( ((y/sz_y) * 2.0f ) - 1.0f),
+      ( ((x/sz_x) * 2.0f ) - 1.0f),
+     -( ((y/sz_y) * 2.0f ) - 1.0f),
 
     1.0f,1
 
@@ -176,47 +176,39 @@ void View::mouse_over(void) {
   auto& Sin = SIN::ice();
   auto& cam = Sin.cam;
 
-  auto  pos =
+  auto  pos = glm::normalize(
     View::mouse_pos_w()
-//  + cam.get_pos()
-  ;
 
-  auto fwd=glm::normalize(
-    pos
+  );
 
-  ) * -1.0f;
+  auto a = cam.get_pos() + pos;
+  auto b = a + pos * 100.0f;
 
   // test
   auto& cube  = Sin.nodes[0];
   auto& point = Sin.nodes[1];
 
-  point.teleport(fwd);
-  auto fwd2=glm::normalize(
-    pos-cam.get_fwd()
+  Gaol::Line ray;
 
-  ) * -10.0f;
+  ray.set(a,b);
 
-  cube.teleport(fwd2);
-//  Sin.draw_line(fwd,fwd2);
+  auto& box=cube.bound().box();
+  auto  col=box.isect_ray(ray);
 
-//  Gaol::Line ray;
-//
-//  ray.set(cam.get_pos(),fwd);
-//
-//  auto& box=cube.bound().box();
-//  auto  col=box.isect_line(ray);
-//
-//  if(col.hit()) {
-//
-//    vec3 a=col.point();
-//    a=a+glm::normalize(-fwd)*2.0f;
-//
-//    point.teleport(a);
-//
-//  } else {
-//    point.teleport(fwd);
-//
-//  };
+  uint8_t line_color=SIN::RED;
+
+  if(col.hit()) {
+    line_color=SIN::GREEN;
+    point.teleport(col.point());
+    printf("HIT\n");
+
+  } else {
+    point.teleport(b);
+    printf("NO HIT\n");
+
+  };
+
+  Sin.draw_line(a,b,line_color);
 
 };
 

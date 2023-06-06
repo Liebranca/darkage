@@ -136,7 +136,10 @@ void DARK::spawn_camera(
 
 void DARK::loop(void) {
 
-  auto& Chasm=CHASM::ice();
+  auto& Chasm = CHASM::ice();
+  auto& Sin   = SIN::ice();
+
+  Sin.unbind_batch();
 
   CHASM_RUN(
     (void*) &this->draw_data,
