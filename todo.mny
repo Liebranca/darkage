@@ -2,7 +2,7 @@
 
 *> Viewport
 
-~ Raycast to cursor
+x Raycast to cursor
 
 x Navigate around point
 x ^ reset navigation point
@@ -13,8 +13,13 @@ x ^ reset navigation point
 ~ ^ crk preview
 ~ ^ joj preview
 
+*> Draw
+
+x Sort visible cells by distance to camera
+~ Build occluders from cell objects
+
 *> Modeler
 
-~ Line drawing
+x Line drawing
 ~ Geometry modifiers
 ~ Node trees

@@ -14,7 +14,7 @@ class World {
 
 public:
 
-  VERSION   "v0.00.1b";
+  VERSION   "v0.00.2b";
   AUTHOR    "IBN-3DILA";
 
 // ---   *   ---   *   ---
@@ -31,6 +31,8 @@ private:
 
   Nodes m_nodes;
   Slots m_free;
+
+  uint64_t m_size;
 
 // ---   *   ---   *   ---
 // guts
@@ -60,7 +62,7 @@ public:
 
   // get visible cells
   void cells_in_frustum(
-    Map1D&         dst,
+    Map1D_Ref&     dst,
     Gaol::Frustum& frus
 
   );
@@ -68,6 +70,12 @@ public:
   // get object from id
   Node& get_node(uint64_t id) {
     return m_nodes[id];
+
+  };
+
+  // get cell count
+  uint64_t get_size(void) {
+    return m_size;
 
   };
 

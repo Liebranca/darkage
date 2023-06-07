@@ -23,6 +23,8 @@ void World::nit(uvec3& dim) {
   int32_t hy=dim.y/2;
   int32_t hz=dim.z/2;
 
+  m_size=0;
+
   // triple crap!
   for(int32_t z=0;z<dim.z;z++) {
     m_cell.push_back(Map2D());
@@ -33,6 +35,8 @@ void World::nit(uvec3& dim) {
       for(int32_t x=0;x<dim.x;x++) {
         ivec3 pos {x-hx,y-hy,z-hz};
         m_cell[z][y].push_back(Cell(pos));
+
+        m_size++;
 
       };
 
@@ -118,21 +122,35 @@ void World::pop_node(Node& node) {
 // get visible cells
 
 void World::cells_in_frustum(
-  Map1D&         dst,
+  Map1D_Ref&     dst,
   Gaol::Frustum& frus
 
 ) {
 
+  Map1D_Sort data(m_size);
+
+  // get refpoint in near plane
+  auto&  planes = frus.box().planes();
+  data.m_origin = planes[
+    Gaol::Box::FRONT
+
+  ].centroid();
+
+  // walk cells
   for(auto& col  : m_cell) {
   for(auto& row  : col   ) {
   for(auto& cell : row   ) {
 
+    // store visible
     if(0 < frus.isect_bound(cell.bound())) {
-      dst.push_back(cell);
+      data.push(cell);
 
     };
 
   }}};
+
+  // write sorted to dst
+  data.sort(dst);
 
 };
 

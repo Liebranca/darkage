@@ -4,6 +4,7 @@
 // ---   *   ---   *   ---
 // deps
 
+  #include <functional>
   #include "world/Node.hpp"
 
 // ---   *   ---   *   ---
@@ -13,7 +14,7 @@ class Cell {
 
 public:
 
-  VERSION   "v0.00.1b";
+  VERSION   "v0.00.2b";
   AUTHOR    "IBN-3DILA";
 
   cxr32 SIZE=4.0f;
@@ -64,6 +65,11 @@ public:
 
   Slots& get_nodes(void);
 
+  inline vec3& get_pos(bool rel=true) {
+    return (rel) ? m_relpos : m_abspos;
+
+  };
+
 };
 
 // ---   *   ---   *   ---
@@ -73,6 +79,33 @@ typedef std::vector<Cell>  Map1D;
 
 typedef std::vector<Map1D> Map2D;
 typedef std::vector<Map2D> Map3D;
+
+// jesus!
+typedef std::vector<
+  std::reference_wrapper<Cell>
+
+>  Map1D_Ref;
+
+// ---   *   ---   *   ---
+// helpers
+
+struct Map1D_Sort {
+
+  Map1D_Ref m_unsorted;
+
+  std::vector<float>    m_dist;
+  std::vector<uint64_t> m_pending;
+
+  vec3 m_origin;
+
+  // cstruc
+  Map1D_Sort(uint64_t size);
+
+  // grow/solve
+  void push(Cell& cell);
+  void sort(Map1D_Ref& dst);
+
+};
 
 // ---   *   ---   *   ---
 

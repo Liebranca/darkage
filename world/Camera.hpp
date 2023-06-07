@@ -19,7 +19,7 @@ class Camera : public Node {
 
 public:
 
-  VERSION   "v2.00.7";
+  VERSION   "v2.00.8";
   AUTHOR    "IBN-3DILA";
 
 // ---   *   ---   *   ---
@@ -82,15 +82,15 @@ public:
 private:
 
   Camera::Lens  m_lens;
+
   Gaol::Frustum m_frustum;
+  Map1D_Ref     m_cells;
 
   GBuff m_ubo;
 
   mat4  m_view;
   mat4  m_proj;
   mat4  m_stow;
-
-  Map1D m_cells;
 
   bool  m_ortho=false;
 
@@ -138,6 +138,10 @@ private:
     );
 
   };
+
+  // frustum checks list of cells
+  // from world, sorts by distance
+  void calc_visible_cells(void);
 
 // ---   *   ---   *   ---
 // iface

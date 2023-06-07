@@ -24,8 +24,6 @@ mat4& Camera::get_view(void) {
 
   if(m_updated.movement) {
 
-    auto& Dark = DARK::ice();
-
     m_view  = this->calc_view();
     m_stow  = this->calc_stow();
 
@@ -34,17 +32,29 @@ mat4& Camera::get_view(void) {
     this->update_frustum();
     this->update_ubo(1);
 
-    // get visible cells
-    m_cells.clear();
-    Dark.world.cells_in_frustum(
-      m_cells,
-      m_frustum
-
-    );
+    this->calc_visible_cells();
 
   };
 
   return m_view;
+
+};
+
+// ---   *   ---   *   ---
+// frustum checks list of cells
+// from world, sorts by distance
+
+void Camera::calc_visible_cells(void) {
+
+  auto& Dark=DARK::ice();
+  m_cells.clear();
+
+  // get list
+  Dark.world.cells_in_frustum(
+    m_cells,
+    m_frustum
+
+  );
 
 };
 
@@ -130,7 +140,7 @@ void Camera::get_visible(void) {
 
   dst.clear();
   for(auto& cell : m_cells) {
-  for(auto& id   : cell.get_nodes()) {
+  for(auto& id   : cell.get().get_nodes()) {
 
     auto& node=Dark.world.get_node(id);
     if(this->bound_in_frustum(node.bound())) {
