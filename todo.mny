@@ -1,4 +1,4 @@
-> darkage v0.01.0a
+> libdark v0.01.0a
 
 *> Viewport
 
@@ -8,10 +8,25 @@ x Navigate around point
 x ^ reset navigation point
 ~ ^ set navigation point
 
-~ Mesh load
-~ ^ edit
-~ ^ crk preview
-~ ^ joj preview
+*> CTLI
+
+~ Screen overlay
+x Panel drawing
+~ ^mouse over panel
+
+*> Texturing
+
+~ Boxmapping
+~ UV unwrapping
+~ UV editor
+
+~ Bump from albedo
+~ Roughness from bump
+~ Curvature from bump+bevel
+~ Emit/metallic color masks
+
+~ Bake to UV ma
+~ joj preview
 
 *> Draw
 
@@ -22,4 +37,10 @@ x Sort visible cells by distance to camera
 
 x Line drawing
 ~ Geometry modifiers
+~ ^ Bevel
+
 ~ Node trees
+
+~ Mesh load
+~ ^ edit
+~ ^ crk preview

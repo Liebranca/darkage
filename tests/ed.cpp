@@ -15,7 +15,7 @@ void load_resources(void) {
 
   auto& Sin=SIN::ice();
 
-  Sin.new_batch(SIN::PROGRAM2);
+  Sin.new_batch(SIN::MESH);
 
   uint32_t me0=Sin.batch->new_edit();
   uint32_t me1=Sin.batch->new_edit();
@@ -61,8 +61,36 @@ void load_objects(void) {
 
 int logic(void* data) {
 
+  static uint16_t alpha = 0xF;
+  static uint16_t tick  = 0;
+
   View::load_cache();
   View::mouse_3D();
+
+  auto& Sin=SIN::ice();
+
+  if(alpha) {
+
+    Sin.draw_text(
+
+      "HLOWRLD!\n"
+      "HLOWRLD!\n",
+
+      {-1,1},
+      {16,16,16},
+
+      0x0802 | (alpha << 20) | (alpha << 4)
+
+    );
+
+  };
+
+  tick++;
+  if(tick == 6 && alpha) {
+    alpha--;
+    tick=0;
+
+  };
 
   return 1;
 

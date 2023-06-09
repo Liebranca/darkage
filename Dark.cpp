@@ -34,8 +34,8 @@ DARK::DARK(void) {
 // under this->programs
 
 void DARK::load_shaders(void) {
-  auto& Sin=SIN::ice();
-  Sin.nit_programs(this->programs);
+//  auto& Sin=SIN::ice();
+//  Sin.nit_programs(this->programs);
 
 };
 
