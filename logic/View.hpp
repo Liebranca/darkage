@@ -16,7 +16,7 @@ class View {
 
 public:
 
-  VERSION   "v0.00.7b";
+  VERSION   "v0.00.8b";
   AUTHOR    "IBN-3DILA";
 
 // ---   *   ---   *   ---
@@ -131,6 +131,9 @@ public:
 
   // ^any visible object
   static Collision mouse_over_any(void);
+
+  // ^ui element
+  static bool mouse_over_ui(uint32_t idex);
 
   // common control scheme for
   // managing a 3D viewport

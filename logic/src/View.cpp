@@ -240,6 +240,21 @@ Collision View::mouse_over_any(void) {
 };
 
 // ---   *   ---   *   ---
+// ^ui element
+
+bool View::mouse_over_ui(uint32_t idex) {
+
+  auto& Sin   = SIN::ice();
+  auto& elem  = Sin.ui_elem(idex);
+
+  auto& plane = elem.get_plane();
+  auto& pos   = View::mouse_pos_s();
+
+  return plane.indom_point_xy(pos);
+
+};
+
+// ---   *   ---   *   ---
 // common control scheme for
 // controling a 3D viewport
 

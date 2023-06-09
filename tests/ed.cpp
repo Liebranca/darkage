@@ -64,33 +64,41 @@ int logic(void* data) {
   static uint16_t alpha = 0xF;
   static uint16_t tick  = 0;
 
-  View::load_cache();
-  View::mouse_3D();
+  static uint8_t  bgc   = 0x00;
 
   auto& Sin=SIN::ice();
 
-  if(alpha) {
+//  if(alpha) {
 
-    Sin.draw_text(
+    auto hello=Sin.draw_text(
 
       "HLOWRLD!\n"
       "HLOWRLD!\n",
 
       {-1,1},
-      {16,16,16},
+      {8,1,16},
 
-      0x0802 | (alpha << 20) | (alpha << 4)
+      (0x02 << 0) | (alpha <<  4)
+    | (bgc  << 8) | (alpha << 12)
 
     );
 
-  };
+//  };
 
-  tick++;
-  if(tick == 6 && alpha) {
-    alpha--;
-    tick=0;
+//  tick++;
+//  if(tick == 6 && alpha) {
+//    alpha--;
+//    tick=0;
+//
+//  };
 
-  };
+  View::load_cache();
+  View::mouse_3D();
+
+  bgc=(View::mouse_over_ui(hello))
+    ? 0x0C
+    : 0x00
+    ;
 
   return 1;
 
