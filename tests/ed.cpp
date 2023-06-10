@@ -96,9 +96,12 @@ void load_ui(void) {
 
   auto& Dark=DARK::ice();
 
-  auto& e=Test_Panel.push();
-  e.ct="where the async at?\n";
-  e.on_active=ui_elem_active;
+  auto& e0=Test_Panel.push();
+  e0.ct="where the async at?";
+  e0.on_active=ui_elem_active;
+
+  auto& e1=Test_Panel.push();
+  e1.ct="\x80";
 
   Dark.register_panel(Test_Panel);
   Test_Panel.enable();

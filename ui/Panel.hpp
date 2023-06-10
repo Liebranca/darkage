@@ -78,7 +78,8 @@ private:
   vec2  m_offset;
   Elems m_elems;
 
-  bool  m_enabled = false;
+  bool  m_hovering = false;
+  bool  m_enabled  = false;
 
 // ---   *   ---   *   ---
 // guts

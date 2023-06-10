@@ -90,7 +90,7 @@ uint32_t UI_Panel::draw_elem(
 
   );
 
-  m_offset+=Sin.ui_elem(id).get_rdim();
+  m_offset+=Sin.get_ui_cursor();
 
   return id;
 
@@ -110,6 +110,8 @@ void UI_Panel::draw(void) {
   };
 
   auto& Sin=SIN::ice();
+
+  Sin.reset_ui_cursor();
   Sin.draw_rect(m_pos,dim,0x8000);
 
   for(auto& e : m_elems) {
@@ -142,10 +144,17 @@ void UI_Panel::update_elem(
   | (ELEM_ACTIVE * click * hover)
   ;
 
+  e.state *= m_hovering==false;
+
   if(e.state & ELEM_ACTIVE) {
     e.on_active();
 
   };
+
+  m_hovering=(! m_hovering)
+    ? e.state & ELEM_HOVER
+    : m_hovering
+    ;
 
 };
 
@@ -153,6 +162,8 @@ void UI_Panel::update_elem(
 // ^bat
 
 void UI_Panel::update(void) {
+
+  m_hovering=false;
 
   for(auto& e : m_elems) {
     if(e.enabled) {
