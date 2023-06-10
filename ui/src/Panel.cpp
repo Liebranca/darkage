@@ -103,6 +103,15 @@ void UI_Panel::draw(void) {
 
   m_offset={0,0};
 
+  vec2 dim={
+    m_dim.x * UI::CENT_X,
+    m_dim.y * UI::CENT_Y
+
+  };
+
+  auto& Sin=SIN::ice();
+  Sin.draw_rect(m_pos,dim,0x8000);
+
   for(auto& e : m_elems) {
     if(e.enabled) {
       e.sin_id=this->draw_elem(e);

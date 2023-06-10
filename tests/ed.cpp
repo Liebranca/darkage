@@ -15,10 +15,10 @@
 
   UI_Panel Test_Panel(
 
-    {0,0},
+    {-0.8f,0.8f},
 
-    0.4f,
-    0.1f
+    0.5f,
+    0.5f
 
   );
 
@@ -97,7 +97,7 @@ void load_ui(void) {
   auto& Dark=DARK::ice();
 
   auto& e=Test_Panel.push();
-  e.ct="where the async at?";
+  e.ct="where the async at?\n";
   e.on_active=ui_elem_active;
 
   Dark.register_panel(Test_Panel);
