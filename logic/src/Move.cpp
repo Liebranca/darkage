@@ -47,24 +47,6 @@ quat Move::q_from_motion(
 
 };
 
-//// ---   *   ---   *   ---
-//// offset direction by position
-//
-//quat Move::q_from_abs(
-//  vec3& n,
-//  vec2& motion
-//
-//) {
-//
-//  auto base = n * motion.y;
-//
-//  quat y = {1,-base.x,base.y,-base.z};
-//  quat x = {1,0,-motion.x,0};
-//
-//  return x*y;
-//
-//};
-
 // ---   *   ---   *   ---
 // ^gives unit n times q
 

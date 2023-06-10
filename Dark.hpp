@@ -4,13 +4,18 @@
 // ---   *   ---   *   ---
 // deps
 
+  #include <functional>
+
   #include "bitter/kvrnel/GLM.hpp"
+  #include "bitter/kvrnel/Clock.hpp"
 
   #include "chasm/Chasm.hpp"
-  #include "sin/Sin.hpp"
+  #include "sin/shader/Params.hpp"
 
   #include "world/Camera.hpp"
   #include "world/World.hpp"
+
+  #include "ui/Panel.hpp"
 
 // ---   *   ---   *   ---
 // info
@@ -19,7 +24,7 @@ class DARK {
 
 public:
 
-  VERSION   "v0.00.2b";
+  VERSION   "v0.00.3b";
   AUTHOR    "IBN-3DILA";
 
 // ---   *   ---   *   ---
@@ -73,14 +78,23 @@ private:
   static int draw(void* data);
   void draw_prologue(void);
   void draw_epilogue(void);
+  void draw_ui(void);
 
   // ^same for logic step
   static int logic(void* data);
   void logic_prologue(void);
   void logic_epilogue(void);
+  void logic_ui(void);
 
   Nodes draw_data;
   Nodes logic_data;
+
+  typedef std::vector<
+    std::reference_wrapper<UI_Panel>
+
+  > UI_Panels;
+
+  UI_Panels m_ui;
 
   void load_shaders(void);
 
@@ -126,6 +140,11 @@ public:
   void loop(void);
 
 // ---   *   ---   *   ---
+// ui control
+
+  void register_panel(UI_Panel& panel);
+
+// ---   *   ---   *   ---
 // getters
 
   static Node& player(void);
@@ -138,11 +157,7 @@ public:
 // ---   *   ---   *   ---
 // program clock wrappers
 
-  inline Clock& get_clock(void) {
-    auto&  Chasm=CHASM::ice();
-    return Chasm.win.clock();
-
-  };
+  Clock& get_clock(void);
 
   inline float fBy(void) {
     return this->get_clock().fBy();

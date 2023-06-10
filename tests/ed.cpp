@@ -3,10 +3,24 @@
 
   #include "gaoler/Box.hpp"
 
+  #include "sin/Sin.hpp"
   #include "Dark.hpp"
 
   #include "logic/Move.hpp"
   #include "logic/View.hpp"
+  #include "ui/Panel.hpp"
+
+// ---   *   ---   *   ---
+// GBL
+
+  UI_Panel Test_Panel(
+
+    {0,0},
+
+    0.4f,
+    0.1f
+
+  );
 
 // ---   *   ---   *   ---
 // spawn meshes
@@ -60,47 +74,34 @@ void load_objects(void) {
 // selfex
 
 int logic(void* data) {
-
-  static uint16_t alpha = 0xF;
-  static uint16_t tick  = 0;
-
-  static uint8_t  bgc   = 0x00;
-
-  auto& Sin=SIN::ice();
-
-//  if(alpha) {
-
-    auto hello=Sin.draw_text(
-
-      "HLOWRLD!\n"
-      "HLOWRLD!\n",
-
-      {-1,1},
-      {8,1,16},
-
-      (0x02 << 0) | (alpha <<  4)
-    | (bgc  << 8) | (alpha << 12)
-
-    );
-
-//  };
-
-//  tick++;
-//  if(tick == 6 && alpha) {
-//    alpha--;
-//    tick=0;
-//
-//  };
-
   View::load_cache();
   View::mouse_3D();
 
-  bgc=(View::mouse_over_ui(hello))
-    ? 0x0C
-    : 0x00
-    ;
-
   return 1;
+
+};
+
+// ---   *   ---   *   ---
+// "on-ui-click" test
+
+void ui_elem_active(void) {
+  printf("YOU CLICKED ME\n");
+
+};
+
+// ---   *   ---   *   ---
+// makes ui elems
+
+void load_ui(void) {
+
+  auto& Dark=DARK::ice();
+
+  auto& e=Test_Panel.push();
+  e.ct="where the async at?";
+  e.on_active=ui_elem_active;
+
+  Dark.register_panel(Test_Panel);
+  Test_Panel.enable();
 
 };
 
@@ -118,6 +119,8 @@ int main(void) {
 
   load_resources();
   load_objects();
+
+  load_ui();
 
   Dark.spawn_camera();
   Dark.loop();

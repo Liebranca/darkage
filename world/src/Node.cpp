@@ -12,7 +12,9 @@
 // ---   *   ---   *   ---
 // deps
 
+  #include "sin/Sin.hpp"
   #include "Dark.hpp"
+
   #include "world/Node.hpp"
 
 // ---   *   ---   *   ---

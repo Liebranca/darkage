@@ -16,7 +16,7 @@ class View {
 
 public:
 
-  VERSION   "v0.00.8b";
+  VERSION   "v0.00.9b";
   AUTHOR    "IBN-3DILA";
 
 // ---   *   ---   *   ---

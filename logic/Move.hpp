@@ -68,12 +68,6 @@ public:
 
   );
 
-//  static quat q_from_abs(
-//    vec3& n,
-//    vec2& abs
-//
-//  );
-
   static vec3 n_by_motion(
     vec3& n,
     vec2& motion

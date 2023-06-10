@@ -12,6 +12,9 @@
 // ---   *   ---   *   ---
 // deps
 
+  #include "chasm/Chasm.hpp"
+  #include "sin/Sin.hpp"
+
   #include "Dark.hpp"
   #include "logic/View.hpp"
 

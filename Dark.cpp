@@ -28,6 +28,15 @@ DARK::DARK(void) {
 };
 
 // ---   *   ---   *   ---
+// get program clock
+
+Clock& DARK::get_clock(void) {
+  auto&  Chasm=CHASM::ice();
+  return Chasm.win.clock();
+
+};
+
+// ---   *   ---   *   ---
 // sin wrapper
 //
 // compiles params listed
@@ -161,7 +170,7 @@ Node& DARK::spawn_object(
 
   return world.push_node(bld);
 
-}
+};
 
 // ---   *   ---   *   ---
 // runs application
@@ -194,8 +203,11 @@ void DARK::draw_prologue(void) {
 // ^epilogue
 
 void DARK::draw_epilogue(void) {
+
   auto& Sin=SIN::ice();
+
   Sin.draw_enqueued();
+  this->draw_ui();
 
 };
 
@@ -234,10 +246,30 @@ int DARK::draw(void* data) {
 };
 
 // ---   *   ---   *   ---
+// draw step for ui panels
+
+void DARK::draw_ui(void) {
+
+  for(auto& ref : m_ui) {
+    auto& panel=ref.get();
+
+    if(panel.enabled()) {
+      panel.draw();
+
+    };
+
+  };
+
+};
+
+// ---   *   ---   *   ---
 // ^TODO: same Fs for logic
 
 void DARK::logic_prologue(void) {};
-void DARK::logic_epilogue(void) {};
+void DARK::logic_epilogue(void) {
+  this->logic_ui();
+
+};
 
 int DARK::deflogic(void* data) {
   return 1;
@@ -257,6 +289,31 @@ int DARK::logic(void* data) {
   Dark.logic_epilogue();
 
   return out;
+
+};
+
+// ---   *   ---   *   ---
+// logic step for ui panels
+
+void DARK::logic_ui(void) {
+
+  for(auto& ref : m_ui) {
+    auto& panel=ref.get();
+
+    if(panel.enabled()) {
+      panel.update();
+
+    };
+
+  };
+
+};
+
+// ---   *   ---   *   ---
+// ui control
+
+void DARK::register_panel(UI_Panel& panel) {
+  m_ui.push_back(panel);
 
 };
 

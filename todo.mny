@@ -11,8 +11,10 @@ x ^ reset navigation point
 *> CTLI
 
 ~ Screen overlay
+
 x Panel drawing
 x ^mouse over panel
+~ ^Async anims for panel
 
 *> Texturing
 
