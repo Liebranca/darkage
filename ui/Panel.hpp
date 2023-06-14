@@ -13,7 +13,7 @@ class UI_Panel {
 
 public:
 
-  VERSION   "v0.00.1b";
+  VERSION   "v0.00.2b";
   AUTHOR    "IBN-3DILA";
 
   cx8 ELEM_DEFAULT = 0b00;

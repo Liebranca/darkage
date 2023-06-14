@@ -3,6 +3,8 @@
 
   #include "gaoler/Box.hpp"
 
+  #include "sin/mesh/Modeler.hpp"
+
   #include "sin/Sin.hpp"
   #include "Dark.hpp"
 
@@ -31,30 +33,27 @@ void load_resources(void) {
 
   Sin.new_batch(SIN::MESH);
 
+  Modeler sm;
+
+  auto j0 = sm.new_joint();
+  auto j1 = sm.new_joint();
+
+  vec3 p0 = {0,0,0};
+  vec3 p1 = {0,-2,0};
+
+  sm.joint(j0).get_xform().move(p0);
+  sm.joint(j1).get_xform().move(p1);
+
+  sm.joint(j0).set_base(0);
+  sm.joint(j0).set_profile(4);
+
+  sm.joint(j1).set_base(4);
+  sm.joint(j1).set_profile(4);
+
+  sm.join(j0,j1);
+
   uint32_t me0=Sin.batch->new_edit();
-  uint32_t me1=Sin.batch->new_edit();
-
-  CRK::Prim p0;
-  CRK::Prim p1;
-
-  Gaol::Box box0;
-  Gaol::Box box1;
-
-  vec3 origin {0,0,0};
-
-  // target
-  box0.set(origin,0.5f,0.5f,0.5f);
-  box0.to_mesh(p0);
-  p0.tris_to_lines();
-
-  Sin.batch->repl(me0,p0,GL_LINES);
-
-  // pointer
-  box1.set(origin,0.1f,0.1f,0.1f);
-  box1.to_mesh(p1);
-  p1.tris_to_lines();
-
-  Sin.batch->repl(me1,p1,GL_LINES);
+  Sin.batch->repl(me0,sm.get_mesh());
 
 };
 
@@ -62,11 +61,8 @@ void load_resources(void) {
 // ^instance
 
 void load_objects(void) {
-
-  auto& Dark = DARK::ice();
-
+  auto& Dark=DARK::ice();
   Dark.spawn_object(0,Node::STATIC);
-  Dark.spawn_object(1,Node::STATIC);
 
 };
 
@@ -101,7 +97,10 @@ void load_ui(void) {
   e0.on_active=ui_elem_active;
 
   auto& e1=Test_Panel.push();
-  e1.ct="\x80";
+  e1.ct="\x7F";
+
+  e1.color_default = {.packed=0x00F1};
+  e1.color_hover   = {.packed=0x00F9};
 
   Dark.register_panel(Test_Panel);
   Test_Panel.enable();

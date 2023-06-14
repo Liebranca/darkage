@@ -5,9 +5,9 @@
 // deps
 
   #include "bitter/kvrnel/GLM.hpp"
-  #include "gaoler/Bound.hpp"
+  #include "bitter/kvrnel/T3D.hpp"
 
-  #include "world/T3D.hpp"
+  #include "gaoler/Bound.hpp"
 
 // ---   *   ---   *   ---
 // info
