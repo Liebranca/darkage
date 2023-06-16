@@ -6,9 +6,6 @@
 
   #include "bitter/kvrnel/Style.hpp"
 
-  #include "sin/mesh/JOJ_Sprite.hpp_sg"
-  #include "sin/mesh/M3D.hpp_sg"
-
   #include "input/Ctl.hpp"
   #include "input/WASD.hpp"
 
@@ -29,11 +26,7 @@ namespace DA_Default {
 
   };
 
-  static shader::List programs {
-    &shader::mesh::JOJ_Sprite,
-    &shader::mesh::M3D
-
-  };
+  static shader::List programs {};
 
 };
 

@@ -73,6 +73,17 @@ int logic(void* data) {
   View::load_cache();
   View::mouse_3D();
 
+  auto& Sin=SIN::ice();
+
+  Sin.draw_line(
+
+    {0.5f,0.8f,0},
+    {0.5f,-0.8f,0},
+
+    0xF6,1.0f
+
+  );
+
   return 1;
 
 };

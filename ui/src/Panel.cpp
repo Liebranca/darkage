@@ -78,7 +78,7 @@ uint32_t UI_Panel::draw_elem(
   };
 
   auto&    Sin = SIN::ice();
-  uint32_t id  = Sin.draw_text(
+  uint32_t id  = Sin.draw_ui_text(
 
     e.ct,
 
@@ -112,7 +112,7 @@ void UI_Panel::draw(void) {
   auto& Sin=SIN::ice();
 
   Sin.reset_ui_cursor();
-  Sin.draw_rect(m_pos,dim,0x8000);
+  Sin.draw_ui_rect(m_pos,dim,0x8000);
 
   for(auto& e : m_elems) {
     if(e.enabled) {
