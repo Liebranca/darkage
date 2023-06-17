@@ -24,6 +24,8 @@
 
   );
 
+  Modeler Mod;
+
 // ---   *   ---   *   ---
 // spawn meshes
 
@@ -33,27 +35,27 @@ void load_resources(void) {
 
   Sin.new_batch(SIN::MESH);
 
-  Modeler sm;
+  auto j0 = Mod.new_joint();
+  auto j1 = Mod.new_joint();
 
-  auto j0 = sm.new_joint();
-  auto j1 = sm.new_joint();
+  vec3 p0 = {0, 0.5f,0};
+  vec3 p1 = {0,-0.5f,0};
 
-  vec3 p0 = {0,0,0};
-  vec3 p1 = {0,-2,0};
+  Mod.joint(j0).get_xform().move(p0);
+  Mod.joint(j1).get_xform().move(p1);
 
-  sm.joint(j0).get_xform().move(p0);
-  sm.joint(j1).get_xform().move(p1);
+  Mod.joint(j0).set_base(0);
+  Mod.joint(j0).set_profile(11);
 
-  sm.joint(j0).set_base(0);
-  sm.joint(j0).set_profile(4);
+  Mod.joint(j1).set_base(11);
+  Mod.joint(j1).set_profile(11);
 
-  sm.joint(j1).set_base(4);
-  sm.joint(j1).set_profile(4);
-
-  sm.join(j0,j1);
+  Mod.join(j0,j1);
+  Mod.cap(j0,false);
+  Mod.cap(j1,true);
 
   uint32_t me0=Sin.batch->new_edit();
-  Sin.batch->repl(me0,sm.get_mesh());
+  Sin.batch->repl(me0,Mod.get_packed());
 
 };
 
@@ -67,22 +69,91 @@ void load_objects(void) {
 };
 
 // ---   *   ---   *   ---
-// selfex
+// debug draw for vertex ring
 
-int logic(void* data) {
-  View::load_cache();
-  View::mouse_3D();
+void draw_joint(
 
-  auto& Sin=SIN::ice();
+  uint16_t joint_id,
+
+  uint8_t  point_color = 0xF9,
+  uint8_t  line_color  = 0x4D
+
+) {
+
+  auto& Sin   = SIN::ice();
+
+  auto& pts   = Mod.get_deformed();
+  auto  range = Mod.get_joint_dverts(joint_id);
+
+  for(auto i=range[0];i<range[1];i++) {
+    Sin.draw_point(pts[i].co,point_color,8.0f);
+
+  };
+
+  for(auto i=range[0];i<range[1]-1;i++) {
+
+    auto& a=pts[i+0].co;
+    auto& b=pts[i+1].co;
+
+    Sin.draw_line(a,b,line_color,1.0f);
+
+  };
 
   Sin.draw_line(
 
-    {0.5f,0.8f,0},
-    {0.5f,-0.8f,0},
+    pts[range[1]-1].co,
+    pts[range[0]].co,
 
-    0xF6,1.0f
+    line_color,
+    0.75f
 
   );
+
+};
+
+// ---   *   ---   *   ---
+// ^draw triangles of modeler mesh
+
+void draw_mod_tris(
+  uint8_t line_color=0x8A
+
+) {
+
+  auto& Sin   = SIN::ice();
+
+  auto& pts   = Mod.get_deformed();
+  auto& faces = Mod.get_faces();
+
+  for(auto& face : faces) {
+
+    for(uint16_t i=0;i<face.size()-2;i+=2) {
+
+      auto& a=pts[face[i+0].get().idex].co;
+      auto& b=pts[face[i+1].get().idex].co;
+      auto& c=pts[face[i+2].get().idex].co;
+
+      Sin.draw_line(a,b,line_color,0.3f);
+      Sin.draw_line(b,c,line_color,0.3f);
+      Sin.draw_line(c,a,line_color,0.3f);
+
+    };
+
+  };
+
+};
+
+// ---   *   ---   *   ---
+// selfex
+
+int logic(void* data) {
+
+  View::load_cache();
+  View::mouse_3D();
+
+//  draw_joint(0);
+//  draw_joint(1);
+//
+//  draw_mod_tris();
 
   return 1;
 
@@ -114,7 +185,7 @@ void load_ui(void) {
   e1.color_hover   = {.packed=0x00F9};
 
   Dark.register_panel(Test_Panel);
-  Test_Panel.enable();
+//  Test_Panel.enable();
 
 };
 

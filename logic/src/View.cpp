@@ -294,12 +294,11 @@ void View::mouse_3D(
   if(do_zoom) {
     View::mouse_zoom(do_zoom);
 
-    auto moa=View::mouse_over_any();
-    if(moa.hit()) {
-      auto& node=moa.node();
-      printf("HOVER ON %04u\n",node.get_world_id());
-
-    };
+//    auto moa=View::mouse_over_any();
+//    if(moa.hit()) {
+//      auto& node=moa.node();
+//
+//    };
 
   };
 
