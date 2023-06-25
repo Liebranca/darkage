@@ -18,13 +18,14 @@ x ^mouse over panel
 
 *> Texturing
 
-~ Boxmapping
-~ UV unwrapping
+x Boxmapping
+x UV unwrapping
 ~ UV editor
 
-~ Bump from albedo
-~ Roughness from bump
-~ Curvature from bump+bevel
+x Bump from albedo
+x Roughness from bump
+x AO from mesh
+x Curvature from bump
 ~ Emit/metallic color masks
 
 ~ Bake to UV ma

@@ -43,23 +43,28 @@ void load_resources(void) {
   Mod.ring(r0).set_profile(4);
   Mod.push_uv_row(r0);
 
-  auto inset = Mod.inset(r0,2,0.5f);
+  auto i0=Mod.inset(r0,2,0.5f);
 
-  Mod.nrot(r0,-8);
-  Mod.nrot(inset[0],-8);
-  Mod.nrot(inset[1],-14);
+  Mod.nrot(r0,16);
+  Mod.nrot(i0[0],8);
+  Mod.nrot(i0.back(),16);
 
-//  auto inset_b=Mod.new_ring(inset.back());
-  auto tube  = Mod.extrude(
-    inset[1],1,1.0f,false
+  auto e0=Mod.extrude(
+    i0.back(),1,1.0f,false
 
   );
 
+  Mod.nrot(e0.back(),16);
+
+  auto i1=Mod.inset(e0.back(),1,0.2f);
   Mod.uv_cut(0.0f,0.0f,1.0f);
+
+  Mod.cap(i1.back());
 
   auto r1=Mod.new_ring(r0);
   Mod.push_uv_row(r1);
-  Mod.extrude(r1,1,0.2f,true);
+  auto e1=Mod.extrude(r1,1,0.2f,true);
+  Mod.ring(e1.back()).occlude(0.0f);
 
   uint32_t me0=Sin.batch->new_edit();
 
