@@ -132,6 +132,11 @@ void UI_Panel::update_elem(
 
 ) {
 
+  if(e.ghost) {
+    return;
+
+  };
+
   auto& rat   = CHASM::ice().ev.get_rat();
 
   bool  hover = View::mouse_over_ui(e.sin_id);

@@ -293,7 +293,6 @@ bool View::mouse_over_ui(uint32_t idex) {
 // controling a 3D viewport
 
 void View::mouse_3D(
-  uint8_t drag_b,
   uint8_t view_b
 
 ) {
@@ -304,7 +303,6 @@ void View::mouse_3D(
   auto& rat     = Chasm.ev.get_rat();
   auto& cam     = Dark.cam;
 
-  auto  do_drag = rat.clicks(drag_b);
   auto  do_view = rat.clicks(view_b);
   auto  do_zoom = rat.wheel() * 4;
 
@@ -312,9 +310,6 @@ void View::mouse_3D(
 
   if(do_view) {
     View::mouse_look_at(View::cam_target());
-
-  } else if(do_drag) {
-    View::mouse_drag();
 
   } else {
     Chasm.win.disable_mouse_trap();

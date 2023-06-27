@@ -11,6 +11,7 @@
   #include "logic/Move.hpp"
   #include "logic/View.hpp"
   #include "ui/Panel.hpp"
+  #include "ui/VLink.hpp"
 
 // ---   *   ---   *   ---
 // GBL
@@ -24,7 +25,14 @@
 
   );
 
-  Modeler Mod;
+  Modeler  Mod;
+
+  uint16_t Sel_Ring=0xFFFF;
+
+  uint32_t Edit_Mesh;
+  uint32_t Edit_Batch;
+
+  UI_VLink<Modeler::Ring,float> Link_Test;
 
 // ---   *   ---   *   ---
 // spawn meshes
@@ -33,7 +41,7 @@ void load_resources(void) {
 
   auto& Sin=SIN::ice();
 
-  Sin.new_batch(SIN::MATBAKE,64);
+  Edit_Batch=Sin.new_batch(SIN::MATBAKE,64);
 
   Mod.uv_cut(0.0f,0.0f,1.0f);
 
@@ -66,11 +74,13 @@ void load_resources(void) {
   auto e1=Mod.extrude(r1,1,0.2f,true);
   Mod.ring(e1.back()).occlude(0.0f);
 
-  uint32_t me0=Sin.batch->new_edit();
+  Edit_Mesh=Sin.batch->new_edit();
 
-  Sin.batch->repl(me0,Mod.get_packed());
+  Sin.batch->repl(Edit_Mesh,Mod.get_packed());
+
   Sin.batch->set_texture(
-    me0,"/home/lyeb/Cruelty/Chars/matmk/planks_a.png"
+    Edit_Mesh,
+    "/home/lyeb/Cruelty/Chars/matmk/planks_a.png"
 
   );
 
@@ -81,7 +91,7 @@ void load_resources(void) {
 
 void load_objects(void) {
   auto& Dark=DARK::ice();
-//  Dark.spawn_object(0,Node::STATIC);
+  Dark.spawn_object(0,Node::STATIC);
 
 };
 
@@ -96,6 +106,11 @@ void draw_ring(
   uint8_t  line_color  = 0x4D
 
 ) {
+
+  line_color=(ring_id==Sel_Ring)
+    ? 0xF3
+    : line_color
+    ;
 
   auto& Sin  = SIN::ice();
   auto& pts  = Mod.get_deformed();
@@ -210,30 +225,57 @@ void draw_mod_uvs(
 
 void get_closest_point(void) {
 
-  auto& Sin  = SIN::ice();
-  auto& Dark = DARK::ice();
-  auto& cam  = Dark.cam;
+  auto& Sin    = SIN::ice();
+  auto& Chasm  = CHASM::ice();
+  auto& Dark   = DARK::ice();
 
-  auto& pts  = Mod.get_deformed();
+  auto& cam    = Dark.cam;
+  auto& rat    = Chasm.ev.get_rat();
 
-  svec<vec3> cords;
-  cords.resize(pts.size());
+  auto  lclick = rat.clicks(Rat::LEFT);
+  auto& pts    = Mod.get_deformed();
 
-  // map cords to pts.co
-  uint16_t i=0;
-  for(auto& co : cords) {
-    co=pts[i++].co;
+  for(uint16_t i=0;i<Mod.ring_cnt();i++) {
 
-  };
+    auto& ring  = Mod.ring(i);
+    auto& verts = ring.get_verts();
 
-  auto sorted=cam.sort_closest(cords);
+    svec<vec3> cords;
+    cords.resize(verts.size());
 
-  for(auto p : cords) {
+    // map cords to pts.co
+    uint16_t j=0;
+    for(auto& co : cords) {
+      co=pts[verts[j++].idex].co;
 
-    auto col=View::mouse_over_point(p);
+    };
 
-    if(col.hit()) {
-      Sin.draw_point(p,0xF3,16.0f);
+    auto sorted = cam.sort_closest(cords);
+    bool found  = false;
+
+    for(auto p : cords) {
+
+      auto col=View::mouse_over_point(p);
+
+      if(col.hit()) {
+
+        Sin.draw_point(p,0xF3,16.0f);
+        found=true;
+
+        break;
+
+      };
+
+    };
+
+    if(found) {
+
+      if(lclick) {
+        Sel_Ring=i;
+        Link_Test.set_object(0,ring);
+
+      };
+
       break;
 
     };
@@ -258,6 +300,17 @@ int logic(void* data) {
   draw_mod_tris();
   get_closest_point();
 
+  if(Sel_Ring != 0xFFFF) {
+
+    auto& e1=Test_Panel.elem(1);
+
+    e1.ct=std::to_string(
+      Link_Test.get_attr(0)
+
+    );
+
+  };
+
   return 1;
 
 };
@@ -266,7 +319,23 @@ int logic(void* data) {
 // "on-ui-click" test
 
 void ui_elem_active(void) {
-  printf("YOU CLICKED ME\n");
+
+  auto& Sin=SIN::ice();
+
+  if(Sel_Ring == 0xFFFF) {
+    return;
+
+  };
+
+  auto& e1 = Test_Panel.elem(1);
+  auto& v  = Link_Test.get_attr(0);
+
+  v+=0.1f;
+
+  Link_Test.set_attr(0,v);
+
+  Sin.bind_batch(Edit_Batch);
+  Sin.batch->repl(Edit_Mesh,Mod.get_packed());
 
 };
 
@@ -278,17 +347,24 @@ void load_ui(void) {
   auto& Dark=DARK::ice();
 
   auto& e0=Test_Panel.push();
-  e0.ct="where the async at?";
-  e0.on_active=ui_elem_active;
+  e0.ct="Radius:";
 
   auto& e1=Test_Panel.push();
-  e1.ct="\x7F";
+  e1.ct="0.5f";
+  e1.ghost=false;
+  e1.on_active=ui_elem_active;
 
-  e1.color_default = {.packed=0x00F1};
-  e1.color_hover   = {.packed=0x00F9};
+  e1.color_default = {.packed=0xF8F7};
+  e1.color_hover   = {.packed=0xF8F2};
+
+  Link_Test.getset_procs(
+    &Modeler::Ring::get_radius,
+    &Modeler::Ring::set_radius
+
+  );
 
   Dark.register_panel(Test_Panel);
-//  Test_Panel.enable();
+  Test_Panel.enable();
 
 };
 

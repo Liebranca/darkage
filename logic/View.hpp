@@ -141,8 +141,7 @@ public:
   // common control scheme for
   // managing a 3D viewport
   static void mouse_3D(
-    uint8_t drag_b=Rat::RIGHT,
-    uint8_t view_b=Rat::LEFT
+    uint8_t view_b=Rat::RIGHT
 
   );
 

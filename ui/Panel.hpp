@@ -61,6 +61,7 @@ public:
 
     bool show_ctl = false;
     bool enabled  = true;
+    bool ghost    = true;
 
   };
 
@@ -120,6 +121,12 @@ public:
   // ^remove
   void pop(Elem& e);
   void pop(uint32_t id);
+
+  // ^fetch
+  inline Elem& elem(uint32_t id) {
+    return m_elems[id];
+
+  };
 
   // draw all elements
   void draw(void);
