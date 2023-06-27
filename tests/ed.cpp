@@ -81,7 +81,7 @@ void load_resources(void) {
 
 void load_objects(void) {
   auto& Dark=DARK::ice();
-  Dark.spawn_object(0,Node::STATIC);
+//  Dark.spawn_object(0,Node::STATIC);
 
 };
 
@@ -97,20 +97,35 @@ void draw_ring(
 
 ) {
 
-  auto& Sin   = SIN::ice();
+  auto& Sin  = SIN::ice();
+  auto& pts  = Mod.get_deformed();
+  auto& ring = Mod.ring(ring_id);
 
-  auto& pts   = Mod.get_deformed();
-  auto  range = Mod.get_ring_dverts(ring_id);
+  uint16_t cnt  = 0;
+  uint16_t prof = ring.get_profile();
 
-  for(auto i=range[0];i<range[1];i++) {
+  svec<uint16_t> vi;
+
+  for(auto& vert : ring.get_verts()) {
+
+    if(cnt==prof) {
+      break;
+
+    };
+
+    uint16_t i=vert.idex;
     Sin.draw_point(pts[i].co,point_color,8.0f);
+
+    vi.push_back(i);
+
+    cnt++;
 
   };
 
-  for(auto i=range[0];i<range[1]-1;i++) {
+  for(auto i=0;i<vi.size()-1;i++) {
 
-    auto& a=pts[i+0].co;
-    auto& b=pts[i+1].co;
+    auto& a=pts[vi[i+0]].co;
+    auto& b=pts[vi[i+1]].co;
 
     Sin.draw_line(a,b,line_color,1.0f);
 
@@ -118,8 +133,8 @@ void draw_ring(
 
   Sin.draw_line(
 
-    pts[range[1]-1].co,
-    pts[range[0]].co,
+    pts[vi.back()].co,
+    pts[vi[0]].co,
 
     line_color,
     0.75f
@@ -191,6 +206,43 @@ void draw_mod_uvs(
 };
 
 // ---   *   ---   *   ---
+// point selection test
+
+void get_closest_point(void) {
+
+  auto& Sin  = SIN::ice();
+  auto& Dark = DARK::ice();
+  auto& cam  = Dark.cam;
+
+  auto& pts  = Mod.get_deformed();
+
+  svec<vec3> cords;
+  cords.resize(pts.size());
+
+  // map cords to pts.co
+  uint16_t i=0;
+  for(auto& co : cords) {
+    co=pts[i++].co;
+
+  };
+
+  auto sorted=cam.sort_closest(cords);
+
+  for(auto p : cords) {
+
+    auto col=View::mouse_over_point(p);
+
+    if(col.hit()) {
+      Sin.draw_point(p,0xF3,16.0f);
+      break;
+
+    };
+
+  };
+
+};
+
+// ---   *   ---   *   ---
 // selfex
 
 int logic(void* data) {
@@ -198,7 +250,13 @@ int logic(void* data) {
   View::load_cache();
   View::mouse_3D();
 
-//  draw_mod_uvs();
+  for(uint16_t i=0;i<Mod.ring_cnt();i++) {
+    draw_ring(i);
+
+  };
+
+  draw_mod_tris();
+  get_closest_point();
 
   return 1;
 

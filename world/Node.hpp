@@ -16,7 +16,7 @@ class Node {
 
 public:
 
-  VERSION   "v0.01.0b";
+  VERSION   "v0.01.1b";
   AUTHOR    "IBN-3DILA";
 
 // ---   *   ---   *   ---
@@ -70,13 +70,14 @@ private:
 
   Draw_Data   m_draw_data;
 
-  Gaol::Bound m_bound;
+  Gaol::Bound m_bounds;
+  vec3        m_bounds_dim = {0.5f,0.5f,0.5f};
 
-  vec3        m_lindirn = {0,0,0};
-  vec3        m_linvel  = {0,0,0};
+  vec3        m_lindirn    = {0,0,0};
+  vec3        m_linvel     = {0,0,0};
 
-  vec3        m_angdirn = {0,0,0};
-  vec3        m_angvel  = {0,0,0};
+  vec3        m_angdirn    = {0,0,0};
+  vec3        m_angvel     = {0,0,0};
 
   uint64_t    m_world_id;
   uint64_t    m_cell_id;
@@ -133,6 +134,15 @@ public:
 
   );
 
+  // calc bounding box from list of cords
+  void calc_bounds_dim(svec<vec3>& pts);
+
+  // ^set from vec
+  inline void set_bounds_dim(vec3& dim) {
+    m_bounds_dim=dim;
+
+  };
+
   // TODO
   void enable(void) {};
   void disable(void) {};
@@ -156,7 +166,7 @@ public:
   };
 
   inline Gaol::Bound& bound(void) {
-    return m_bound;
+    return m_bounds;
 
   };
 

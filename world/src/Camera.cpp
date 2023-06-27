@@ -12,6 +12,7 @@
 // ---   *   ---   *   ---
 // deps
 
+  #include <numeric>
   #include <GL/glew.h>
 
   #include "Dark.hpp"
@@ -124,6 +125,64 @@ void Camera::nit(
     lens.far
 
   );
+
+};
+
+// ---   *   ---   *   ---
+// get closest cord to self
+
+uint16_t Camera::closest(svec<vec3>& pts) {
+
+  uint16_t out  = 0;
+  uint16_t i    = 0;
+
+  float    near = 9999.9f;
+
+  // walk list of cords
+  for(auto& p : pts) {
+
+    // get distance to self
+    float dist=glm::distance(
+      p,this->get_pos()
+
+    );
+
+    // ^is *closer* than previous
+    if(dist < near) {
+      near = dist;
+      out  = i;
+
+    };
+
+    i++;
+
+  };
+
+  return out;
+
+};
+
+// ---   *   ---   *   ---
+// sort cords by distance to self
+
+svec<vec3> Camera::sort_closest(
+  svec<vec3> pts
+
+) {
+
+  svec<vec3> out;
+  out.resize(pts.size());
+
+  for(auto& p : out) {
+
+    uint16_t idex=this->closest(pts);
+
+    p=pts[idex];
+    pts.erase(pts.begin()+idex);
+
+  };
+
+  return out;
 
 };
 

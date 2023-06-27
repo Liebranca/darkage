@@ -16,7 +16,7 @@ class View {
 
 public:
 
-  VERSION   "v0.00.9b";
+  VERSION   "v0.01.0b";
   AUTHOR    "IBN-3DILA";
 
 // ---   *   ---   *   ---
@@ -131,6 +131,9 @@ public:
 
   // ^any visible object
   static Collision mouse_over_any(void);
+
+  // ^coordinate
+  static Collision mouse_over_point(vec3& p);
 
   // ^ui element
   static bool mouse_over_ui(uint32_t idex);

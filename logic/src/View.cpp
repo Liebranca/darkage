@@ -66,7 +66,7 @@ void View::calc_mouse_pos(void) {
   m_cache().mouse_pos_s=vec2(cords);
 
   // ^xform to world coords
-  cords=cam.get_stow() * cords;
+  cords=cam.screen_to_world(cords);
   m_cache().mouse_pos_w=vec3(cords);
 
 };
@@ -238,6 +238,37 @@ Collision View::mouse_over_any(void) {
 
   };
 
+  return out;
+
+};
+
+// ---   *   ---   *   ---
+// ^coordinate
+
+Collision View::mouse_over_point(vec3& p) {
+
+  Collision out;
+
+  auto& Dark = DARK::ice();
+  auto& cam  = Dark.cam;
+
+  float dist = glm::distance(
+    p,cam.get_pos()
+
+  );
+
+  dist=(dist < 0.05f) ? 0.05f : dist;
+  dist=(dist > 2.00f) ? 2.00f : dist;
+
+  float r=0.25f/dist;
+  r=(r > 2.0f) ? 2.0f : r;
+
+  Gaol::Sphere sph;
+  sph.set(p,r);
+
+  auto& ray=View::mouse_ray();
+
+  out=sph.isect_ray(ray);
   return out;
 
 };

@@ -79,18 +79,41 @@ void Node::spacepart_track(
 };
 
 // ---   *   ---   *   ---
+// calc bounding box from list of cords
+
+void Node::calc_bounds_dim(svec<vec3>& pts) {
+
+  float x=0.0f;
+  float y=0.0f;
+  float z=0.0f;
+
+  for(auto& pt : pts) {
+
+    float fx=fabs(pt.x);
+    float fy=fabs(pt.y);
+    float fz=fabs(pt.z);
+
+    x=(fx > x) ? fx : x;
+    y=(fx > y) ? fx : y;
+    z=(fx > z) ? fx : z;
+
+  };
+
+  m_bounds_dim=vec3({x,y,z});
+
+};
+
+// ---   *   ---   *   ---
 // regenerate physbody
 
 void Node::calc_bounds(void) {
 
-  vec3 dim(0.5f,0.5f,0.5f);
-
-  m_bound.set(
+  m_bounds.set(
 
     m_xform.get_model(),
     m_xform.position(),
 
-    dim
+    m_bounds_dim
 
   );
 
@@ -103,8 +126,8 @@ void Node::calc_bounds(void) {
 
 bool Node::boundschk(Node& other) {
 
-  auto& s0=m_bound.sphere();
-  auto& s1=other.m_bound.sphere();
+  auto& s0=m_bounds.sphere();
+  auto& s1=other.m_bounds.sphere();
 
   // get coldata
   auto col=s0.isect_sphere(s1);

@@ -19,7 +19,7 @@ class Camera : public Node {
 
 public:
 
-  VERSION   "v2.00.8";
+  VERSION   "v2.00.9";
   AUTHOR    "IBN-3DILA";
 
 // ---   *   ---   *   ---
@@ -162,6 +162,12 @@ public:
   // ctrash
   Camera(void) {};
 
+  // get closest cord to self
+  uint16_t closest(svec<vec3>& pts);
+
+  // ^sort cords by distance to self
+  svec<vec3> sort_closest(svec<vec3> pts);
+
 // ---   *   ---   *   ---
 
   // frustum wrappers
@@ -283,6 +289,29 @@ public:
     + this->get_fwd()
 
     );
+
+  };
+
+// ---   *   ---   *   ---
+// space transforms
+
+  inline vec3 screen_to_world(vec3& co) {
+    return vec3(m_stow * vec4(co,1));
+
+  };
+
+  inline vec4 screen_to_world(vec4& co) {
+    return m_stow * co;
+
+  };
+
+  vec3 world_to_screen(vec3& co) {
+    return vec3(m_view * vec4(co,1));
+
+  };
+
+  vec4 world_to_screen(vec4& co) {
+    return m_view * co;
 
   };
 
