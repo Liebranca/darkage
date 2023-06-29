@@ -21,7 +21,20 @@
     {-0.8f,0.8f},
 
     0.5f,
-    0.5f
+    0.5f,
+
+    1
+
+  );
+
+  UI_Panel Test_Popup(
+
+    {-1.0f,1.0f},
+
+    0.15f,
+    0.35f,
+
+    0
 
   );
 
@@ -70,6 +83,8 @@ void load_resources(void) {
   Mod.cap(i1.back());
 
   auto r1=Mod.new_ring(r0);
+  Mod.glue(r0,r1);
+
   Mod.push_uv_row(r1);
   auto e1=Mod.extrude(r1,1,0.2f,true);
   Mod.ring(e1.back()).occlude(0.0f);
@@ -173,11 +188,13 @@ void draw_mod_tris(
 
   for(auto& face : faces) {
 
-    for(uint16_t i=0;i<face.size()-2;i+=2) {
+    auto& verts=face.verts;
 
-      auto& a=pts[face[i+0].get().idex].co;
-      auto& b=pts[face[i+1].get().idex].co;
-      auto& c=pts[face[i+2].get().idex].co;
+    for(uint16_t i=0;i<verts.size()-2;i+=2) {
+
+      auto& a=pts[verts[i+0].get().idex].co;
+      auto& b=pts[verts[i+1].get().idex].co;
+      auto& c=pts[verts[i+2].get().idex].co;
 
       Sin.draw_line(a,b,line_color,0.5f);
       Sin.draw_line(b,c,line_color,0.5f);
@@ -199,9 +216,7 @@ void draw_mod_uvs(
 ) {
 
   auto& Sin   = SIN::ice();
-
   auto& pts   = Mod.get_deformed();
-  auto& faces = Mod.get_faces();
 
   Sin.set_point_layer(1);
 
@@ -292,22 +307,45 @@ int logic(void* data) {
   View::load_cache();
   View::mouse_3D();
 
-  for(uint16_t i=0;i<Mod.ring_cnt();i++) {
-    draw_ring(i);
+//  for(uint16_t i=0;i<Mod.ring_cnt();i++) {
+//    draw_ring(i);
+//
+//  };
+//
+//  draw_mod_tris();
+//  get_closest_point();
+//
+//  if(Sel_Ring != 0xFFFF) {
+//
+//    auto& e1=Test_Panel.elem(1);
+//
+//    e1.ct=std::to_string(
+//      Link_Test.get_attr(0)
+//
+//    );
+//
+//  };
 
-  };
+  static int fug=0;
 
-  draw_mod_tris();
-  get_closest_point();
+  auto& Chasm  = CHASM::ice();
+  auto& rat    = Chasm.ev.get_rat();
 
-  if(Sel_Ring != 0xFFFF) {
+  auto  ltap   = rat.tap(Rat::LEFT);
 
-    auto& e1=Test_Panel.elem(1);
+  if(ltap) {
 
-    e1.ct=std::to_string(
-      Link_Test.get_attr(0)
+    if(Test_Popup.enabled()) {
+      Test_Popup.disable();
 
-    );
+    } else {
+
+      auto mpos=View::mouse_pos_s();
+
+      Test_Popup.teleport(mpos);
+      Test_Popup.enable();
+
+    };
 
   };
 
@@ -328,11 +366,12 @@ void ui_elem_active(void) {
   };
 
   auto& e1 = Test_Panel.elem(1);
-  auto& v  = Link_Test.get_attr(0);
+  auto  v  = Link_Test.get_attr(0);
 
   v+=0.1f;
 
   Link_Test.set_attr(0,v);
+  Mod.sync_glued(Sel_Ring);
 
   Sin.bind_batch(Edit_Batch);
   Sin.batch->repl(Edit_Mesh,Mod.get_packed());
@@ -363,8 +402,14 @@ void load_ui(void) {
 
   );
 
+  auto& p0=Test_Popup.push();
+  p0.ct="I POP!";
+
   Dark.register_panel(Test_Panel);
+  Dark.register_panel(Test_Popup);
+
   Test_Panel.enable();
+  Test_Popup.disable();
 
 };
 

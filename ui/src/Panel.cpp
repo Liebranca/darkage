@@ -26,11 +26,13 @@ UI_Panel::UI_Panel(
   vec2  pos,
 
   float cent_x,
-  float cent_y
+  float cent_y,
+
+  float layer
 
 ) {
 
-  this->nit(pos,cent_x,cent_y);
+  this->nit(pos,cent_x,cent_y,layer);
 
 };
 
@@ -39,19 +41,77 @@ void UI_Panel::nit(
   vec2  pos,
 
   float cent_x,
-  float cent_y
+  float cent_y,
+
+  float layer
 
 ) {
 
-  m_pos=pos;
+  this->resize(vec2({cent_x,cent_y}));
+  this->teleport(pos);
 
-  m_dim={
-    cent_x * UI::SIZE_X,
-    cent_y * UI::SIZE_Y
+  m_offset = {0,0};
+  m_layer  = layer*2;
+
+};
+
+// ---   *   ---   *   ---
+// ^reset scale
+
+void UI_Panel::resize(vec2 dim) {
+
+  m_dim=vec2({
+    dim.x * UI::SIZE_X,
+    dim.y * UI::SIZE_Y
+
+  });
+
+};
+
+// ---   *   ---   *   ---
+// ^reset position
+// takes scale into account
+
+void UI_Panel::teleport(vec2 pos) {
+
+  const float size[]={
+    UI::CENT_X * 1.750f,
+    UI::CENT_Y * 1.225f
 
   };
 
-  m_offset={0,0};
+  const float mul[]={
+    4.0f,4.75f
+
+  };
+
+  // for each axis of pos,dim
+  for(uint8_t ax=0;ax<2;ax++) {
+
+    float dirn  = (ax) ? -1 : 1;
+    float sign  = (pos[ax] < 0) ? -1 : 1;
+
+    float wall  = size[ax];
+    float beg   = -(1.0f - wall*mul[ax]);
+
+    float value = dirn * pos[ax];
+    float mod   = m_dim[ax] * wall;
+    float sum   = value+mod;
+
+    // adjust pos if pos+dim makes
+    // rect be drawn OOB
+    if(sum > 1.0f) {
+      pos[ax]=(1.0f-mod) * sign;
+
+    // not OOB, just too close to the edge ;>
+    } else if(value < beg) {
+      pos[ax]=beg * dirn;
+
+    };
+
+  };
+
+  m_pos=pos;
 
 };
 
@@ -63,7 +123,7 @@ uint32_t UI_Panel::draw_elem(
 
 ) {
 
-  vec2 pos=m_pos+m_offset;
+  vec3 pos=vec3(m_pos+m_offset,m_layer);
 
   vec3 dim={
 
@@ -112,7 +172,7 @@ void UI_Panel::draw(void) {
   auto& Sin=SIN::ice();
 
   Sin.reset_ui_cursor();
-  Sin.draw_ui_rect(m_pos,dim,0x8000);
+  Sin.draw_ui_rect(vec3(m_pos,m_layer),dim,0x8000);
 
   for(auto& e : m_elems) {
     if(e.enabled) {

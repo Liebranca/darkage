@@ -79,6 +79,8 @@ private:
   vec2  m_offset;
   Elems m_elems;
 
+  float m_layer=0.0f;
+
   bool  m_hovering = false;
   bool  m_enabled  = false;
 
@@ -99,7 +101,9 @@ public:
     vec2  pos,
 
     float cent_x,
-    float cent_y
+    float cent_y,
+
+    float layer=0
 
   );
 
@@ -108,7 +112,9 @@ public:
     vec2  pos,
 
     float cent_x,
-    float cent_y
+    float cent_y,
+
+    float layer=0
 
   );
 
@@ -149,6 +155,19 @@ public:
   // ^check
   inline bool enabled(void) {
     return m_enabled;
+
+  };
+
+  // reset scale
+  void resize(vec2 dim);
+
+  // ^reset position
+  // takes scale into account
+  void teleport(vec2 pos);
+
+  // sets Z-offset
+  inline void set_layer(float z) {
+    m_layer=z*2;
 
   };
 
